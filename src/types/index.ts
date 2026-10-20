@@ -8,6 +8,15 @@ export interface CategoryItem {
   description?: string;
 }
 
+export interface Coupon {
+  id: string;
+  code: string;
+  discountPercentage: number;
+  minOrderAmount?: number;
+  isActive: boolean;
+  usageCount: number;
+}
+
 export interface StoreSettings {
   whatsappNumber: string; // "0313 6361218"
   email: string; // "dailcosmeticscht@gmail.com"

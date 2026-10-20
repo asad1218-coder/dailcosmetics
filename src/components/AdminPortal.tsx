@@ -57,6 +57,10 @@ export const AdminPortal: React.FC = () => {
     reviews,
     addReview,
     deleteReview,
+    coupons,
+    addCoupon,
+    deleteCoupon,
+    toggleCouponStatus,
     storeSettings,
     updateStoreSettings,
     setCurrentPage,
@@ -77,7 +81,7 @@ export const AdminPortal: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const [authError, setAuthError] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'orders' | 'reviews' | 'settings'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'orders' | 'reviews' | 'coupons' | 'settings'>('products');
   
   // Product Search & Filter
   const [productSearch, setProductSearch] = useState('');
@@ -92,6 +96,11 @@ export const AdminPortal: React.FC = () => {
   const [newCatSlug, setNewCatSlug] = useState('');
   const [newCatIcon, setNewCatIcon] = useState('✨');
   const [newConcernInput, setNewConcernInput] = useState('');
+
+  // Coupon State
+  const [newCouponCode, setNewCouponCode] = useState('');
+  const [newCouponDiscount, setNewCouponDiscount] = useState<number>(10);
+  const [newCouponMinOrder, setNewCouponMinOrder] = useState<number>(0);
 
   // Order Filter & Invoice Modal
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('all');
@@ -215,6 +224,21 @@ export const AdminPortal: React.FC = () => {
     setNewReviewCity('');
     setNewReviewComment('');
     alert('Verified review published to live storefront!');
+  };
+
+  const handleCreateCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCouponCode.trim()) return;
+    addCoupon({
+      code: newCouponCode.trim(),
+      discountPercentage: Number(newCouponDiscount),
+      minOrderAmount: Number(newCouponMinOrder) || 0,
+      isActive: true,
+    });
+    setNewCouponCode('');
+    setNewCouponDiscount(10);
+    setNewCouponMinOrder(0);
+    alert(`Discount Coupon "${newCouponCode.trim().toUpperCase()}" created and active!`);
   };
 
   // =========================================================================
@@ -496,6 +520,18 @@ export const AdminPortal: React.FC = () => {
           >
             <Star className="w-4 h-4 text-[#c59b27]" />
             <span>Customer Reviews ({reviews.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('coupons')}
+            className={`px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer transition-all ${
+              activeTab === 'coupons'
+                ? 'bg-stone-900 text-white shadow-xs'
+                : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
+            }`}
+          >
+            <Tag className="w-4 h-4 text-[#c59b27]" />
+            <span>Coupons & Discounts ({coupons.length})</span>
           </button>
 
           <button
@@ -1093,6 +1129,149 @@ export const AdminPortal: React.FC = () => {
         )}
 
         {/* =========================================================================
+            TAB 4: COUPONS & DISCOUNTS MANAGEMENT (Shopify Style)
+        ========================================================================= */}
+        {activeTab === 'coupons' && (
+          <div className="space-y-6">
+            
+            {/* Create Coupon Card */}
+            <div className="p-6 rounded-3xl bg-white border border-stone-200/90 shadow-xs space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+                <div>
+                  <h3 className="font-serif-luxury text-lg font-bold text-stone-900">Create Discount Coupon</h3>
+                  <p className="text-xs text-stone-500">Generate promotional voucher codes for campaigns, Eid sales, and customer loyalty</p>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-[#7b3e1d]">
+                  {coupons.length} Active Vouchers
+                </span>
+              </div>
+
+              <form onSubmit={handleCreateCoupon} className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-stone-700 block mb-1">Coupon Code</label>
+                  <input
+                    type="text"
+                    required
+                    value={newCouponCode}
+                    onChange={(e) => setNewCouponCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. FLASH25"
+                    className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden font-mono font-bold uppercase"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-stone-700 block mb-1">Discount (% Off)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="90"
+                    required
+                    value={newCouponDiscount}
+                    onChange={(e) => setNewCouponDiscount(Number(e.target.value))}
+                    className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-stone-700 block mb-1">Min. Order (PKR)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={newCouponMinOrder}
+                    onChange={(e) => setNewCouponMinOrder(Number(e.target.value))}
+                    placeholder="0 (No Minimum)"
+                    className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden"
+                  />
+                </div>
+
+                <div className="flex items-end">
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 bg-[#7b3e1d] hover:bg-[#622f14] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Create Voucher</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Coupons Table */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-stone-50 border-b border-stone-200 text-stone-600 font-bold uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="py-3 px-4">Coupon Code</th>
+                      <th className="py-3 px-4">Discount</th>
+                      <th className="py-3 px-4">Min Spend Requirement</th>
+                      <th className="py-3 px-4">Times Redeemed</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {coupons.map((coupon) => (
+                      <tr key={coupon.id} className="hover:bg-amber-50/30 transition-colors">
+                        <td className="py-3 px-4">
+                          <span className="font-mono font-bold text-stone-900 text-xs px-2.5 py-1 rounded-md bg-stone-100 border border-stone-200">
+                            {coupon.code}
+                          </span>
+                        </td>
+
+                        <td className="py-3 px-4">
+                          <span className="font-bold text-emerald-700 text-sm">
+                            {coupon.discountPercentage}% OFF
+                          </span>
+                        </td>
+
+                        <td className="py-3 px-4 text-stone-600">
+                          {coupon.minOrderAmount ? `Rs. ${coupon.minOrderAmount.toLocaleString()}` : 'No minimum spend'}
+                        </td>
+
+                        <td className="py-3 px-4">
+                          <span className="font-mono font-medium text-stone-600">
+                            {coupon.usageCount} orders
+                          </span>
+                        </td>
+
+                        <td className="py-3 px-4">
+                          <button
+                            onClick={() => toggleCouponStatus(coupon.id)}
+                            className={`px-3 py-1 rounded-full text-[10px] font-bold cursor-pointer transition-colors ${
+                              coupon.isActive
+                                ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                                : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                            }`}
+                          >
+                            {coupon.isActive ? 'Active' : 'Disabled'}
+                          </button>
+                        </td>
+
+                        <td className="py-3 px-4 text-right">
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Delete coupon "${coupon.code}"?`)) {
+                                deleteCoupon(coupon.id);
+                              }
+                            }}
+                            className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 transition-colors cursor-pointer"
+                            title="Delete Coupon"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* =========================================================================
             TAB 5: STORE SETTINGS, PASSWORD & WHATSAPP
         ========================================================================= */}
         {activeTab === 'settings' && (
@@ -1209,6 +1388,54 @@ export const AdminPortal: React.FC = () => {
                     onChange={(e) => setSettingsForm({ ...settingsForm, brandTagline: e.target.value })}
                     className="w-full px-3.5 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden"
                   />
+                </div>
+
+                {/* Official Email */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-stone-800">Official Store Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={settingsForm.email || 'dailcosmeticscht@gmail.com'}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, email: e.target.value })}
+                    className="w-full px-3.5 py-2.5 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden"
+                  />
+                </div>
+
+                {/* Social Channels (Facebook, Instagram, TikTok) */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-stone-800">Facebook Page URL</label>
+                    <input
+                      type="text"
+                      value={settingsForm.facebookUrl || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, facebookUrl: e.target.value })}
+                      placeholder="https://facebook.com/..."
+                      className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-stone-800">Instagram Profile URL</label>
+                    <input
+                      type="text"
+                      value={settingsForm.instagramUrl || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, instagramUrl: e.target.value })}
+                      placeholder="https://instagram.com/..."
+                      className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-stone-800">TikTok Profile URL</label>
+                    <input
+                      type="text"
+                      value={settingsForm.tiktokUrl || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, tiktokUrl: e.target.value })}
+                      placeholder="https://tiktok.com/@..."
+                      className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden font-mono"
+                    />
+                  </div>
                 </div>
 
                 {/* Business Address */}
@@ -1463,10 +1690,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [inStock, setInStock] = useState(initialData?.inStock ?? true);
 
   const presetImages = [
-    { label: '🧴 Herbal Hair Oil (120ml)', src: '/images/dail_hair_oil.jpg' },
-    { label: '✨ Dail Beauty Cream (50g)', src: '/images/dail_beauty_cream.jpg' },
-    { label: '💛 Hand & Foot Cream (60g)', src: '/images/dail_hand_foot.jpg' },
-    { label: '📦 Official Packaging Box', src: '/images/dail_packaging.jpg' },
+    { label: '✨ Dail Beauty Cream (50g)', src: '/images/dail_beauty_cream_square.jpg' },
+    { label: '🧴 Herbal Hair Oil (120ml)', src: '/images/dail_hair_oil_square.jpg' },
+    { label: '💛 Hand & Foot Cream', src: '/images/dail_hand_foot_square.jpg' },
+    { label: '🎁 3-in-1 Regimen Box', src: '/images/dail_hero_banner_golden.jpg' },
+    { label: '🌿 Full Collection Studio', src: '/images/dail_full_collection.jpg' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -1631,9 +1859,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          {/* Image Presets & Custom URL */}
+          {/* Image Presets & Direct Upload / Custom URL */}
           <div>
-            <label className="font-bold text-stone-800 block mb-1">Product Photograph</label>
+            <label className="font-bold text-stone-800 block mb-1">Product Photograph (Select Preset, Upload File, or Paste URL)</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
               {presetImages.map((p, idx) => (
                 <button
@@ -1648,14 +1876,47 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </button>
               ))}
             </div>
-            <input
-              type="text"
-              required
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              placeholder="Or enter image URL..."
-              className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl"
-            />
+
+            {/* Direct Device Upload & URL */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <label className="flex items-center justify-center gap-2 px-3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-xl cursor-pointer border border-stone-200 transition-colors">
+                <span>📁 Upload Image from Device</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        if (reader.result) {
+                          setImage(reader.result as string);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </label>
+
+              <input
+                type="text"
+                required
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                placeholder="Or paste image URL (/images/my-pic.jpg)..."
+                className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl"
+              />
+            </div>
+
+            {/* Live Image Preview */}
+            {image && (
+              <div className="mt-2 flex items-center gap-3 p-2 bg-stone-50 rounded-xl border border-stone-200">
+                <img src={image} alt="Preview" className="w-12 h-12 object-contain bg-white rounded-lg border border-stone-200" />
+                <span className="text-[11px] text-stone-500 truncate flex-1 font-mono">Current image: {image.substring(0, 45)}...</span>
+              </div>
+            )}
           </div>
 
           {/* Concerns Checkboxes */}

@@ -8,9 +8,17 @@ import type {
   ProductCategory, 
   ProductReview, 
   CategoryItem, 
-  StoreSettings 
+  StoreSettings,
+  Coupon 
 } from '../types';
 import { PRODUCTS, REVIEWS } from '../data/products';
+
+export const INITIAL_COUPONS: Coupon[] = [
+  { id: 'c-1', code: 'ORGANIC10', discountPercentage: 10, minOrderAmount: 0, isActive: true, usageCount: 42 },
+  { id: 'c-2', code: 'DAIL20', discountPercentage: 20, minOrderAmount: 2000, isActive: true, usageCount: 78 },
+  { id: 'c-3', code: 'EID15', discountPercentage: 15, minOrderAmount: 1500, isActive: true, usageCount: 31 },
+  { id: 'c-4', code: 'GLOW5', discountPercentage: 5, minOrderAmount: 0, isActive: true, usageCount: 15 },
+];
 
 export const INITIAL_CATEGORIES: CategoryItem[] = [
   { id: 'cat-all', name: 'All Products', slug: 'all', icon: '🛍️', description: 'Complete organic hair and skincare range' },
@@ -148,6 +156,10 @@ interface StoreState {
   discountPercentage: number;
   applyVoucher: (code: string) => { success: boolean; message: string };
   removeVoucher: () => void;
+  coupons: Coupon[];
+  addCoupon: (coupon: Omit<Coupon, 'id' | 'usageCount'>) => void;
+  deleteCoupon: (id: string) => void;
+  toggleCouponStatus: (id: string) => void;
 
   // Store Configuration & Settings (Shopify Grade)
   storeSettings: StoreSettings;
@@ -280,26 +292,49 @@ export const useStore = create<StoreState>()(
 
       clearCart: () => set({ cart: [], appliedVoucher: null, discountPercentage: 0 }),
 
-      // Voucher
+      // Coupons & Discounts
+      coupons: INITIAL_COUPONS,
       appliedVoucher: null,
       discountPercentage: 0,
       applyVoucher: (code) => {
         const cleanCode = code.trim().toUpperCase();
-        if (cleanCode === 'ORGANIC10') {
-          set({ appliedVoucher: 'ORGANIC10', discountPercentage: 10 });
-          return { success: true, message: 'Voucher applied! 10% discount added.' };
+        const found = get().coupons.find((c) => c.code.toUpperCase() === cleanCode && c.isActive);
+        if (found) {
+          const subtotal = get().getCartSubtotal();
+          if (found.minOrderAmount && subtotal < found.minOrderAmount) {
+            return {
+              success: false,
+              message: `Coupon "${found.code}" requires minimum order of Rs. ${found.minOrderAmount.toLocaleString()}`
+            };
+          }
+          // Increment usage
+          set((state) => ({
+            appliedVoucher: found.code,
+            discountPercentage: found.discountPercentage,
+            coupons: state.coupons.map((c) => c.id === found.id ? { ...c, usageCount: c.usageCount + 1 } : c)
+          }));
+          return { success: true, message: `Voucher applied! ${found.discountPercentage}% discount added.` };
         }
-        if (cleanCode === 'DAIL20' || cleanCode === 'DALI20') {
-          set({ appliedVoucher: 'DAIL20', discountPercentage: 20 });
-          return { success: true, message: 'Special Welcome Code! 20% discount applied.' };
-        }
-        if (cleanCode === 'EID15') {
-          set({ appliedVoucher: 'EID15', discountPercentage: 15 });
-          return { success: true, message: 'Special Eid Mubarak 15% discount applied!' };
-        }
-        return { success: false, message: 'Invalid voucher code. Try "ORGANIC10", "DAIL20" or "EID15"' };
+        return { success: false, message: 'Invalid or inactive voucher code. Check available coupons in your cart.' };
       },
       removeVoucher: () => set({ appliedVoucher: null, discountPercentage: 0 }),
+      addCoupon: (newCoupon) => {
+        const coupon: Coupon = {
+          ...newCoupon,
+          id: `coupon-${Date.now()}`,
+          code: newCoupon.code.trim().toUpperCase(),
+          usageCount: 0,
+        };
+        set((state) => ({ coupons: [coupon, ...state.coupons] }));
+      },
+      deleteCoupon: (id) => {
+        set((state) => ({ coupons: state.coupons.filter((c) => c.id !== id) }));
+      },
+      toggleCouponStatus: (id) => {
+        set((state) => ({
+          coupons: state.coupons.map((c) => c.id === id ? { ...c, isActive: !c.isActive } : c)
+        }));
+      },
 
       // Store Settings
       storeSettings: INITIAL_SETTINGS,
@@ -527,11 +562,12 @@ export const useStore = create<StoreState>()(
       }
     }),
     {
-      name: 'dail_cosmetics_store_v4',
+      name: 'dail_cosmetics_store_v5',
       partialize: (state) => ({
         products: state.products,
         categories: state.categories,
         concerns: state.concerns,
+        coupons: state.coupons,
         storeSettings: state.storeSettings,
         orders: state.orders,
         reviews: state.reviews,
