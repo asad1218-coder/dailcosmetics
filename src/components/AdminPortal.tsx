@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import type { Product, OrderDetails, CategoryItem } from '../types';
+import type { Product, OrderDetails, CategoryItem, HeroSlide, CustomPage, FaqItem } from '../types';
+import { BannerFormModal } from './admin/BannerFormModal';
+import { CustomPageFormModal } from './admin/CustomPageFormModal';
+import { FaqFormModal } from './admin/FaqFormModal';
 import {
   Package,
   ShoppingBag,
@@ -34,7 +37,11 @@ import {
   Lock,
   Unlock,
   KeyRound,
-  LogOut
+  LogOut,
+  Image as ImageIcon,
+  Sliders,
+  FileText,
+  HelpCircle
 } from 'lucide-react';
 
 export const AdminPortal: React.FC = () => {
@@ -61,6 +68,20 @@ export const AdminPortal: React.FC = () => {
     addCoupon,
     deleteCoupon,
     toggleCouponStatus,
+    heroSlides,
+    addHeroSlide,
+    updateHeroSlide,
+    deleteHeroSlide,
+    resetHeroSlidesToDefault,
+    customPages,
+    addCustomPage,
+    updateCustomPage,
+    deleteCustomPage,
+    navigateToCustomPage,
+    faqs,
+    addFaq,
+    updateFaq,
+    deleteFaq,
     storeSettings,
     updateStoreSettings,
     setCurrentPage,
@@ -81,7 +102,19 @@ export const AdminPortal: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const [authError, setAuthError] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'orders' | 'reviews' | 'coupons' | 'settings'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'banners' | 'pages' | 'categories' | 'orders' | 'reviews' | 'coupons' | 'settings'>('products');
+
+  // Banner Modals State
+  const [isAddBannerModalOpen, setIsAddBannerModalOpen] = useState(false);
+  const [editingBanner, setEditingBanner] = useState<HeroSlide | null>(null);
+
+  // Custom Page Modals State
+  const [isAddPageModalOpen, setIsAddPageModalOpen] = useState(false);
+  const [editingPage, setEditingPage] = useState<CustomPage | null>(null);
+
+  // FAQ Modals State
+  const [isAddFaqModalOpen, setIsAddFaqModalOpen] = useState(false);
+  const [editingFaq, setEditingFaq] = useState<FaqItem | null>(null);
   
   // Product Search & Filter
   const [productSearch, setProductSearch] = useState('');
@@ -371,15 +404,15 @@ export const AdminPortal: React.FC = () => {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#7b3e1d] text-white uppercase tracking-wider">
-                Shopify / WordPress Grade Store Manager
+                Dail Cosmetics • Central Store Operations & Full Customizer
               </span>
-              <span className="text-xs text-stone-500 font-medium">Dail Cosmetics Operations</span>
+              <span className="text-xs text-stone-500 font-medium">Official Store Manager</span>
             </div>
             <h1 className="font-serif-luxury text-2xl sm:text-3xl font-bold text-stone-900">
               Master Store Dashboard & Control Center
             </h1>
             <p className="text-xs text-stone-500">
-              Full control over products, custom categories, skin concerns, live WhatsApp ordering, and order fulfillment.
+              Full control over products, multi-image galleries, hero carousel banners, custom pages, categories, live texts, and order fulfillment.
             </p>
           </div>
 
@@ -487,6 +520,30 @@ export const AdminPortal: React.FC = () => {
           </button>
 
           <button
+            onClick={() => setActiveTab('banners')}
+            className={`px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer transition-all ${
+              activeTab === 'banners'
+                ? 'bg-stone-900 text-white shadow-xs'
+                : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
+            }`}
+          >
+            <ImageIcon className="w-4 h-4 text-[#c59b27]" />
+            <span>Hero Banners ({heroSlides.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('pages')}
+            className={`px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer transition-all ${
+              activeTab === 'pages'
+                ? 'bg-stone-900 text-white shadow-xs'
+                : 'bg-white text-stone-600 hover:bg-stone-50 border border-stone-200'
+            }`}
+          >
+            <FileText className="w-4 h-4 text-[#c59b27]" />
+            <span>Custom Pages ({customPages.length})</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('categories')}
             className={`px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer transition-all ${
               activeTab === 'categories'
@@ -543,7 +600,7 @@ export const AdminPortal: React.FC = () => {
             }`}
           >
             <Settings className="w-4 h-4 text-[#c59b27]" />
-            <span>Store Settings & Password</span>
+            <span>Settings & Site Content</span>
           </button>
         </div>
 
@@ -717,6 +774,251 @@ export const AdminPortal: React.FC = () => {
                 </table>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: HERO BANNERS MANAGEMENT
+        ========================================================================= */}
+        {activeTab === 'banners' && (
+          <div className="space-y-6">
+            
+            {/* Action Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-6 bg-white rounded-3xl border border-stone-200/90 shadow-xs">
+              <div className="space-y-0.5">
+                <h3 className="font-serif-luxury text-lg sm:text-xl font-bold text-stone-900 flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-[#c59b27]" />
+                  <span>Hero Carousel & Store Banners</span>
+                </h3>
+                <p className="text-xs text-stone-500">
+                  Manage the full-width carousel slides on the store homepage. Upload photos, change headlines, badges, and CTA links.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    if (window.confirm('Reset all banners to default high-definition campaign slides?')) {
+                      resetHeroSlidesToDefault();
+                    }
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Reset Default Banners"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-[#7b3e1d]" />
+                  <span className="hidden sm:inline">Reset Banners</span>
+                </button>
+
+                <button
+                  onClick={() => setIsAddBannerModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-[#7b3e1d] hover:bg-[#622f14] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New Banner</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Banners Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {heroSlides.map((slide, index) => (
+                <div
+                  key={slide.id}
+                  className="bg-white rounded-3xl border border-stone-200/90 shadow-xs overflow-hidden flex flex-col group hover:shadow-md transition-shadow"
+                >
+                  {/* Banner Image Preview with Text Overlay */}
+                  <div className="relative h-48 sm:h-52 overflow-hidden bg-stone-900">
+                    <img
+                      src={slide.image}
+                      alt={slide.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-between text-white">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-white/20 backdrop-blur-xs uppercase tracking-wider text-amber-300">
+                          Slide #{index + 1}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-[#d0473e] text-white uppercase tracking-wider">
+                          {slide.targetCategory}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-[10px] text-amber-200 font-bold uppercase tracking-widest line-clamp-1">
+                          {slide.badge}
+                        </span>
+                        <h4 className="font-heading text-base font-extrabold uppercase leading-tight line-clamp-2">
+                          {slide.title}
+                        </h4>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Banner Details Body */}
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed">
+                        {slide.subtitle}
+                      </p>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
+                        <span className="px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 font-medium border border-stone-200">
+                          Pill: {slide.highlight}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-md bg-amber-50 text-[#7b3e1d] font-bold border border-amber-200">
+                          CTA: {slide.buttonText}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-between pt-3 border-t border-stone-100">
+                      <button
+                        onClick={() => setEditingBanner(slide)}
+                        className="px-3.5 py-1.5 rounded-xl bg-stone-100 hover:bg-[#7b3e1d] hover:text-white text-stone-700 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                        <span>Edit Slide</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          if (heroSlides.length <= 1) {
+                            alert('You must have at least one active banner on the store.');
+                            return;
+                          }
+                          if (window.confirm(`Delete banner "${slide.title}"?`)) {
+                            deleteHeroSlide(slide.id);
+                          }
+                        }}
+                        className="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 transition-colors cursor-pointer"
+                        title="Delete Banner"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: CUSTOM PAGES & POLICIES BUILDER
+        ========================================================================= */}
+        {activeTab === 'pages' && (
+          <div className="space-y-6">
+            
+            {/* Action Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-6 bg-white rounded-3xl border border-stone-200/90 shadow-xs">
+              <div className="space-y-0.5">
+                <h3 className="font-serif-luxury text-lg sm:text-xl font-bold text-stone-900 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-[#c59b27]" />
+                  <span>Custom Pages & Store Policies Builder</span>
+                </h3>
+                <p className="text-xs text-stone-500">
+                  Create, edit, and publish content pages (e.g. Terms, Return Policy, Special Announcements). Links update dynamically in navigation & footer.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsAddPageModalOpen(true)}
+                className="px-4 py-2.5 rounded-xl bg-[#7b3e1d] hover:bg-[#622f14] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Create New Custom Page</span>
+              </button>
+            </div>
+
+            {/* Pages Table */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-stone-50 border-b border-stone-200 text-stone-600 font-bold uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="py-3 px-4">Page Title</th>
+                      <th className="py-3 px-4">URL Identifier</th>
+                      <th className="py-3 px-4">Header Nav</th>
+                      <th className="py-3 px-4">Footer Links</th>
+                      <th className="py-3 px-4">Last Updated</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {customPages.map((page) => (
+                      <tr key={page.id} className="hover:bg-amber-50/30 transition-colors">
+                        <td className="py-3.5 px-4 font-bold text-stone-900">
+                          {page.title}
+                        </td>
+
+                        <td className="py-3.5 px-4 font-mono text-stone-500 text-[11px]">
+                          /page/{page.slug}
+                        </td>
+
+                        <td className="py-3.5 px-4">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            page.showInNav ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-400'
+                          }`}>
+                            {page.showInNav ? '✓ Visible' : 'Hidden'}
+                          </span>
+                        </td>
+
+                        <td className="py-3.5 px-4">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            page.showInFooter ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-400'
+                          }`}>
+                            {page.showInFooter ? '✓ Visible' : 'Hidden'}
+                          </span>
+                        </td>
+
+                        <td className="py-3.5 px-4 text-stone-500 font-mono text-[11px]">
+                          {page.updatedAt || 'Recent'}
+                        </td>
+
+                        <td className="py-3.5 px-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => {
+                                navigateToCustomPage(page.slug);
+                              }}
+                              className="p-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors cursor-pointer"
+                              title="Preview on Live Site"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </button>
+
+                            <button
+                              onClick={() => setEditingPage(page)}
+                              className="p-1.5 rounded-lg bg-stone-100 hover:bg-[#7b3e1d] hover:text-white text-stone-700 transition-colors cursor-pointer"
+                              title="Edit Page Content"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`Delete page "${page.title}"?`)) {
+                                  deleteCustomPage(page.id);
+                                }
+                              }}
+                              className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 transition-colors cursor-pointer"
+                              title="Delete Page"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         )}
 
@@ -1129,7 +1431,7 @@ export const AdminPortal: React.FC = () => {
         )}
 
         {/* =========================================================================
-            TAB 4: COUPONS & DISCOUNTS MANAGEMENT (Shopify Style)
+            TAB: COUPONS & DISCOUNTS MANAGEMENT
         ========================================================================= */}
         {activeTab === 'coupons' && (
           <div className="space-y-6">
@@ -1461,6 +1763,83 @@ export const AdminPortal: React.FC = () => {
               </form>
 
             </div>
+
+            {/* Live FAQs Management Card */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-stone-200/90 shadow-xs space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-stone-100">
+                <div>
+                  <h3 className="font-serif-luxury text-xl font-bold text-stone-900 flex items-center gap-2">
+                    <HelpCircle className="w-5 h-5 text-[#c59b27]" />
+                    <span>Frequently Asked Questions (FAQ) Manager</span>
+                  </h3>
+                  <p className="text-xs text-stone-500">
+                    Customize every word of your customer questions & answers displayed on the homepage and support sections.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsAddFaqModalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-[#7b3e1d] hover:bg-[#622f14] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New FAQ</span>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {faqs.map((faq, index) => (
+                  <div
+                    key={faq.id}
+                    className="p-4 rounded-2xl bg-stone-50 border border-stone-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                  >
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full bg-amber-100 text-[#7b3e1d] font-bold text-[10px] flex items-center justify-center shrink-0">
+                          {index + 1}
+                        </span>
+                        <h4 className="font-bold text-stone-900 text-xs sm:text-sm">
+                          {faq.question}
+                        </h4>
+                      </div>
+                      {faq.urduQuestion && (
+                        <p className="text-[11px] text-[#c59b27] font-serif pl-7">
+                          {faq.urduQuestion}
+                        </p>
+                      )}
+                      <p className="text-xs text-stone-600 pl-7 leading-relaxed line-clamp-2">
+                        {faq.answer}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setEditingFaq(faq)}
+                        className="p-1.5 rounded-lg bg-white hover:bg-[#7b3e1d] hover:text-white text-stone-700 transition-colors cursor-pointer border border-stone-200"
+                        title="Edit FAQ"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm('Delete this FAQ question?')) {
+                            deleteFaq(faq.id);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 transition-colors cursor-pointer"
+                        title="Delete FAQ"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         )}
 
@@ -1495,6 +1874,89 @@ export const AdminPortal: React.FC = () => {
             updateProduct(editingProduct.id, updatedProd);
             setEditingProduct(null);
             alert(`Product updated successfully!`);
+          }}
+        />
+      )}
+
+      {/* =========================================================================
+          MODAL: ADD NEW BANNER
+      ========================================================================= */}
+      {isAddBannerModalOpen && (
+        <BannerFormModal
+          categories={categories}
+          onClose={() => setIsAddBannerModalOpen(false)}
+          onSave={(newSlide) => {
+            addHeroSlide(newSlide);
+            setIsAddBannerModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* =========================================================================
+          MODAL: EDIT EXISTING BANNER
+      ========================================================================= */}
+      {editingBanner && (
+        <BannerFormModal
+          categories={categories}
+          initialData={editingBanner}
+          onClose={() => setEditingBanner(null)}
+          onSave={(updatedSlide) => {
+            updateHeroSlide(editingBanner.id, updatedSlide);
+            setEditingBanner(null);
+          }}
+        />
+      )}
+
+      {/* =========================================================================
+          MODAL: ADD NEW CUSTOM PAGE
+      ========================================================================= */}
+      {isAddPageModalOpen && (
+        <CustomPageFormModal
+          onClose={() => setIsAddPageModalOpen(false)}
+          onSave={(newPage) => {
+            addCustomPage(newPage);
+            setIsAddPageModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* =========================================================================
+          MODAL: EDIT EXISTING CUSTOM PAGE
+      ========================================================================= */}
+      {editingPage && (
+        <CustomPageFormModal
+          initialData={editingPage}
+          onClose={() => setEditingPage(null)}
+          onSave={(updatedPage) => {
+            updateCustomPage(editingPage.id, updatedPage);
+            setEditingPage(null);
+          }}
+        />
+      )}
+
+      {/* =========================================================================
+          MODAL: ADD NEW FAQ
+      ========================================================================= */}
+      {isAddFaqModalOpen && (
+        <FaqFormModal
+          onClose={() => setIsAddFaqModalOpen(false)}
+          onSave={(newFaq) => {
+            addFaq(newFaq);
+            setIsAddFaqModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* =========================================================================
+          MODAL: EDIT EXISTING FAQ
+      ========================================================================= */}
+      {editingFaq && (
+        <FaqFormModal
+          initialData={editingFaq}
+          onClose={() => setEditingFaq(null)}
+          onSave={(updatedFaq) => {
+            updateFaq(editingFaq.id, updatedFaq);
+            setEditingFaq(null);
           }}
         />
       )}
@@ -1685,7 +2147,14 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [originalPrice, setOriginalPrice] = useState(initialData?.originalPrice || 2200);
   const [volume, setVolume] = useState(initialData?.volume || '120 ml / 4.0 fl oz');
   const [badge, setBadge] = useState(initialData?.badge || 'Best Seller');
-  const [image, setImage] = useState(initialData?.image || '/images/dail_hair_oil.jpg');
+  const [galleryImages, setGalleryImages] = useState<string[]>(() => {
+    if (initialData?.galleryImages && initialData.galleryImages.length > 0) {
+      return initialData.galleryImages;
+    }
+    return initialData?.image ? [initialData.image] : ['/images/dail_beauty_cream_square.jpg'];
+  });
+  const [image, setImage] = useState(initialData?.image || galleryImages[0] || '/images/dail_beauty_cream_square.jpg');
+  const [newGalleryUrl, setNewGalleryUrl] = useState('');
   const [description, setDescription] = useState(initialData?.description || '');
   const [inStock, setInStock] = useState(initialData?.inStock ?? true);
 
@@ -1697,9 +2166,56 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     { label: '🌿 Full Collection Studio', src: '/images/dail_full_collection.jpg' },
   ];
 
+  const handleAddUrlToGallery = () => {
+    const url = newGalleryUrl.trim();
+    if (!url) return;
+    if (!galleryImages.includes(url)) {
+      setGalleryImages((prev) => [...prev, url]);
+      if (!image) setImage(url);
+    }
+    setNewGalleryUrl('');
+  };
+
+  const handleMultipleFilesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          const res = reader.result as string;
+          setGalleryImages((prev) => {
+            if (!prev.includes(res)) {
+              return [...prev, res];
+            }
+            return prev;
+          });
+          if (!image) setImage(res);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleSetCoverPhoto = (imgSrc: string) => {
+    setImage(imgSrc);
+  };
+
+  const handleRemovePhoto = (imgSrc: string) => {
+    const updated = galleryImages.filter((img) => img !== imgSrc);
+    setGalleryImages(updated);
+    if (image === imgSrc) {
+      setImage(updated[0] || '');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+
+    const finalCover = image || galleryImages[0] || '/images/dail_beauty_cream_square.jpg';
+    const finalGallery = galleryImages.length > 0 ? galleryImages : [finalCover];
 
     onSave({
       name: name.trim(),
@@ -1713,8 +2229,8 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       reviewCount: initialData?.reviewCount || 1,
       badge: badge || undefined,
       volume: volume.trim(),
-      image: image.trim(),
-      galleryImages: initialData?.galleryImages || [image.trim(), '/images/dail_packaging.jpg'],
+      image: finalCover,
+      galleryImages: finalGallery,
       description: description.trim() || `${name} is formulated with 100% pure organic bio-actives strictly without harmful steroids or synthetic bleaches.`,
       benefits: initialData?.benefits || ['Export Quality Batch', '100% Pure Herbal Actives'],
       keyIngredients: initialData?.keyIngredients || [{ name: 'Botanical Actives', description: 'Certified Pure' }],
@@ -1742,7 +2258,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             <h3 className="font-serif-luxury text-lg sm:text-xl font-bold text-stone-900">
               {initialData ? 'Edit Product Formulation' : 'Create New Product Formulation'}
             </h3>
-            <span className="text-xs text-stone-500">Live Catalog Management</span>
+            <span className="text-xs text-stone-500">Live Catalog Management with Multi-Image Gallery</span>
           </div>
           <button onClick={onClose} className="p-1.5 text-stone-400 hover:text-stone-700 cursor-pointer">
             <X className="w-5 h-5" />
@@ -1859,64 +2375,110 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          {/* Image Presets & Direct Upload / Custom URL */}
-          <div>
-            <label className="font-bold text-stone-800 block mb-1">Product Photograph (Select Preset, Upload File, or Paste URL)</label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
-              {presetImages.map((p, idx) => (
-                <button
-                  type="button"
-                  key={idx}
-                  onClick={() => setImage(p.src)}
-                  className={`p-2 rounded-xl border text-center transition-all cursor-pointer ${
-                    image === p.src ? 'border-[#7b3e1d] bg-amber-50/50' : 'border-stone-200 bg-stone-50'
-                  }`}
-                >
-                  <span className="text-[10px] font-bold text-stone-800 block line-clamp-1">{p.label}</span>
-                </button>
-              ))}
+          {/* Multi-Image Product Gallery Section */}
+          <div className="space-y-3 p-4 bg-stone-50 rounded-2xl border border-stone-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="font-bold text-stone-900 block text-xs">Product Image Gallery ({galleryImages.length} Photos)</label>
+                <span className="text-[11px] text-stone-500">Upload multiple photos or select presets. The star indicates the main cover photo.</span>
+              </div>
             </div>
 
-            {/* Direct Device Upload & URL */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <label className="flex items-center justify-center gap-2 px-3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-xl cursor-pointer border border-stone-200 transition-colors">
-                <span>📁 Upload Image from Device</span>
+            {/* Gallery Thumbnails Grid */}
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
+              {galleryImages.map((imgSrc, idx) => {
+                const isCover = image === imgSrc || (idx === 0 && !image);
+                return (
+                  <div
+                    key={idx}
+                    className={`relative rounded-xl overflow-hidden border-2 bg-white transition-all group ${
+                      isCover ? 'border-[#7b3e1d] shadow-sm' : 'border-stone-200 hover:border-stone-400'
+                    }`}
+                  >
+                    <img src={imgSrc} alt="" className="w-full h-20 object-cover" />
+                    
+                    {/* Cover badge */}
+                    {isCover ? (
+                      <span className="absolute top-1 left-1 bg-[#7b3e1d] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-sm">
+                        ★ Cover
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSetCoverPhoto(imgSrc)}
+                        className="absolute top-1 left-1 bg-black/60 hover:bg-[#7b3e1d] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      >
+                        Set Cover
+                      </button>
+                    )}
+
+                    {/* Delete button */}
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePhoto(imgSrc)}
+                      className="absolute top-1 right-1 bg-black/60 hover:bg-rose-600 text-white p-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      title="Remove from gallery"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Upload Multiple Images & Presets */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-stone-200/80">
+              <label className="flex items-center justify-center gap-2 px-3 py-2 bg-white hover:bg-stone-100 text-stone-800 font-bold rounded-xl cursor-pointer border border-stone-300 transition-colors shadow-2xs">
+                <span>📁 Upload Photos from Device (Multiple)</span>
                 <input
                   type="file"
+                  multiple
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        if (reader.result) {
-                          setImage(reader.result as string);
-                        }
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
+                  onChange={handleMultipleFilesUpload}
                 />
               </label>
 
-              <input
-                type="text"
-                required
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="Or paste image URL (/images/my-pic.jpg)..."
-                className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl"
-              />
+              <div className="flex gap-1.5">
+                <input
+                  type="text"
+                  value={newGalleryUrl}
+                  onChange={(e) => setNewGalleryUrl(e.target.value)}
+                  placeholder="Or paste image URL..."
+                  className="flex-1 px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddUrlToGallery}
+                  className="px-3 py-2 bg-stone-800 hover:bg-stone-900 text-white font-bold rounded-xl text-xs cursor-pointer"
+                >
+                  Add
+                </button>
+              </div>
             </div>
 
-            {/* Live Image Preview */}
-            {image && (
-              <div className="mt-2 flex items-center gap-3 p-2 bg-stone-50 rounded-xl border border-stone-200">
-                <img src={image} alt="Preview" className="w-12 h-12 object-contain bg-white rounded-lg border border-stone-200" />
-                <span className="text-[11px] text-stone-500 truncate flex-1 font-mono">Current image: {image.substring(0, 45)}...</span>
+            {/* Preset Image Options */}
+            <div className="pt-1">
+              <span className="text-[10px] text-stone-500 font-bold block mb-1">Quick Presets:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {presetImages.map((p, idx) => (
+                  <button
+                    type="button"
+                    key={idx}
+                    onClick={() => {
+                      if (!galleryImages.includes(p.src)) {
+                        setGalleryImages([...galleryImages, p.src]);
+                      }
+                      setImage(p.src);
+                    }}
+                    className="px-2 py-1 bg-white hover:bg-amber-50 text-stone-700 hover:text-[#7b3e1d] border border-stone-200 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                  >
+                    + {p.label}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
+
           </div>
 
           {/* Concerns Checkboxes */}

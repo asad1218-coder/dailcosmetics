@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Sparkles, Send, ShieldCheck, Truck } from 'lucide-
 import type { PageView, ProductCategory } from '../types';
 
 export const Footer: React.FC = () => {
-  const { setCurrentPage, setSelectedCategory, storeSettings, getWhatsAppUrl } = useStore();
+  const { setCurrentPage, setSelectedCategory, storeSettings, getWhatsAppUrl, customPages, navigateToCustomPage } = useStore();
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -169,15 +169,19 @@ export const Footer: React.FC = () => {
                   About Dail Cosmetics
                 </button>
               </li>
-              <li>
-                <span className="text-stone-400">Shipping Policy (Free on Rs. 2,000+)</span>
-              </li>
-              <li>
-                <span className="text-stone-400">Cash On Delivery Terms</span>
-              </li>
-              <li>
-                <span className="text-stone-400">7-Day Return & Exchange</span>
-              </li>
+              {/* Dynamic Custom Pages with showInFooter */}
+              {customPages.filter((p) => p.showInFooter).map((p) => (
+                <li key={p.id}>
+                  <button
+                    onClick={() => {
+                      navigateToCustomPage(p.slug);
+                    }}
+                    className="hover:text-white transition-colors cursor-pointer text-left line-clamp-1"
+                  >
+                    {p.title}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -248,7 +252,7 @@ export const Footer: React.FC = () => {
       <div className="border-t border-stone-800 bg-black/60 py-5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500">
           <p className="text-center sm:text-left">
-            © 2026 Dail Cosmetics Pakistan. All Rights Reserved. Powered by Shopify Impulse Architecture.
+            © 2026 Dail Cosmetics Pakistan. All Rights Reserved. Certified 100% Organic & Steroid-Free Formulation.
           </p>
 
           <div className="flex items-center gap-3">

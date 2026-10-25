@@ -9,39 +9,27 @@ interface FAQItem {
 }
 
 export const FaqSection: React.FC = () => {
-  const { storeSettings, getWhatsAppUrl } = useStore();
+  const { storeSettings, getWhatsAppUrl, faqs: storeFaqs } = useStore();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const faqs: FAQItem[] = [
+  const faqs = storeFaqs && storeFaqs.length > 0 ? storeFaqs : [
     {
+      id: 'faq-1',
       question: 'Kya Dail Beauty Cream mein waqai koi steroid ya mercury nahi hai?',
       urduQuestion: 'کیا ڈیل بیوٹی کریم میں واقعی کوئی اسٹیرائیڈ یا کیمیکل نہیں ہے؟',
       answer: 'Bilkul nahi! Dail Beauty Cream aur Hand & Foot Cream 100% WITHOUT STEROID formulate ki gayi hain. Isme koi Clobetasol, Betamethasone ya Mercury shamil nahi hai jo skin ko patla kare ya dhoop mein laal kare. Yeh 100% safe, halal aur export quality botanical actives (Saffron, Niacinamide, Pure Vitamin E) par mabni hai.'
     },
     {
+      id: 'faq-2',
       question: 'Dail Premium Herbal Hair Oil (120ml) se hair fall kitne din mein rukta hai?',
       urduQuestion: 'ڈیل ہربل ہیئر آئل سے بال گرنا کتنے دن میں بند ہوتے ہیں؟',
       answer: 'Hamare 14,000+ Pakistani customers ke verified feedback ke mutabiq, 10 se 14 din ke baqaeda istemal (haftay mein 3 baar massage) se severe hair fall 80% se 90% tak ruk jata hai. Cold-pressed Rosemary aur Kalonji (Black Seed) oil dormant roots ko stimulate karke baby hairs ki growth ko tezi se shuru karte hain.'
     },
     {
+      id: 'faq-3',
       question: 'Delivery charges aur delivery time kya hai Pakistan mein?',
       urduQuestion: 'ڈلیوری کا وقت اور چارجز کیا ہیں؟',
-      answer: 'Hum Trax Express aur TCS Logistics ke zariye poore Pakistan (Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Peshawar, Quetta aur tamam shehron) mein 2 se 4 working days mein doorstep delivery karte hain. Rs. 2,500 se zyada ke order par Free Delivery hai. Standard flat courier fee sirf Rs. 200 hai.'
-    },
-    {
-      question: 'Kya Cash On Delivery (COD) available hai?',
-      urduQuestion: 'کیا کیش آن ڈلیوری کی سہولت موجود ہے؟',
-      answer: 'Jee haan! Cash On Delivery (COD) poore Pakistan mein 100% available hai. Aap courier rider se apna tamper-proof parcel receive karein aur doorstep par cash ada karein. Iske ilawa JazzCash, Easypaisa aur Direct Bank Transfer bhi supported hain.'
-    },
-    {
-      question: 'Kya main direct WhatsApp par order book karwa sakta hoon?',
-      urduQuestion: 'کیا واٹس ایپ پر آرڈر دیا جا سکتا ہے؟',
-      answer: `Jee bilkul! Website par maujood kisi bhi "Order on WhatsApp" button par click karein ya hamari official helpline ${storeSettings.whatsappNumber} par apna naam, pata aur desired products send karein. Hamara representative foran order confirm karega.`
-    },
-    {
-      question: 'Dail Hand & Foot Cream dark knuckles aur rough heels par kab asar karti hai?',
-      urduQuestion: 'ہینڈ اینڈ فٹ کریم سے کتنا جلد رزلٹ ملتا ہے؟',
-      answer: 'Dail Hand & Foot Cream ka 3-Action Repair formula (Deep Moisture, Multi-Effect, Barrier Repair) 5 se 7 din ke raat ko istemal se dark knuckles, tanned haath paon aur cracked heels ko bohot tezi se naram aur glowing banata hai.'
+      answer: 'Hum Trax Express aur TCS Logistics ke zariye poore Pakistan (Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Peshawar, Quetta aur tamam shehron) mein 2 se 4 working days mein doorstep delivery karte hain. Rs. 2,000 se zyada ke order par Free Delivery hai. Standard flat courier fee sirf Rs. 199 hai.'
     }
   ];
 

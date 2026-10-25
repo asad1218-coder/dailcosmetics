@@ -15,6 +15,7 @@ import { OrderTrackingPage } from './components/OrderTrackingPage';
 import { WishlistPage } from './components/WishlistPage';
 import { AboutPage } from './components/AboutPage';
 import { ContactPage } from './components/ContactPage';
+import { CustomPageView } from './components/CustomPageView';
 import { AdminPortal } from './components/AdminPortal';
 import { CartDrawer } from './components/CartDrawer';
 import { SearchModal } from './components/SearchModal';
@@ -70,6 +71,8 @@ export function App() {
         return <AboutPage />;
       case 'contact':
         return <ContactPage />;
+      case 'custom-page':
+        return <CustomPageView />;
       default:
         return <HomeView />;
     }
@@ -112,7 +115,7 @@ const HomeView: React.FC = () => {
   return (
     <div className="space-y-0">
       
-      {/* 1. Full-Width Shopify Impulse Hero Banner Carousel */}
+      {/* 1. Full-Width Hero Banner Carousel */}
       <HeroSection />
 
       {/* 2. Shop By Category Circles (Golden Pearl Signature) */}

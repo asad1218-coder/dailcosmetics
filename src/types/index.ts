@@ -116,6 +116,38 @@ export interface VideoTestimonial {
   quote: string;
 }
 
+export interface HeroSlide {
+  id: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  highlight: string;
+  buttonText: string;
+  secondaryButtonText: string;
+  targetCategory: string;
+  productIndex?: number;
+  image: string;
+  bgGradient?: string;
+  accentColor?: string;
+}
+
+export interface CustomPage {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  showInFooter: boolean;
+  showInNav: boolean;
+  updatedAt: string;
+}
+
+export interface FaqItem {
+  id: string;
+  question: string;
+  urduQuestion?: string;
+  answer: string;
+}
+
 export type PageView = 
   | 'home' 
   | 'shop' 
@@ -125,4 +157,5 @@ export type PageView =
   | 'wishlist' 
   | 'about' 
   | 'contact' 
-  | 'admin';
+  | 'admin'
+  | 'custom-page';

@@ -4,12 +4,12 @@ import { ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, Sparkles, Truck, St
 import { PRODUCTS } from '../data/products';
 
 export const HeroSection: React.FC = () => {
-  const { setCurrentPage, setSelectedCategory, setSelectedProduct } = useStore();
+  const { setCurrentPage, setSelectedCategory, setSelectedProduct, heroSlides } = useStore();
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = [
+  const slides = heroSlides && heroSlides.length > 0 ? heroSlides : [
     {
-      id: 0,
+      id: 'default-1',
       badge: 'EXPORT QUALITY 5-DAY BEAUTY PLAN',
       title: 'ORGANIC RADIANCE WITHOUT STEROIDS',
       subtitle: 'Make your skin bright, soft, fresh, healthy & glowing without thinning or harmful mercury.',
@@ -17,35 +17,7 @@ export const HeroSection: React.FC = () => {
       buttonText: 'SHOP BEST SELLERS',
       secondaryButtonText: 'EXPLORE BEAUTY CREAM',
       targetCategory: 'cream',
-      productIndex: 1, // Dail Beauty Cream
-      image: '/images/dail_hero_banner_golden.jpg',
-      bgGradient: 'from-black/85 via-stone-950/70 to-transparent',
-      accentColor: '#d0473e'
-    },
-    {
-      id: 1,
-      badge: '100% PURE BOTANICAL INFUSION (120ML)',
-      title: 'STOP ACUTE HAIR FALL AT THE ROOT',
-      subtitle: 'Powered with cold-pressed rosemary bio-actives, mountain amla & kalonji for rapid regrowth in 14 days.',
-      highlight: 'Proven Export Quality Batch',
-      buttonText: 'SHOP HAIR CARE',
-      secondaryButtonText: 'VIEW HERBAL HAIR OIL',
-      targetCategory: 'hair-care',
-      productIndex: 0, // Dail Hair Oil
-      image: '/images/dail_full_collection.jpg',
-      bgGradient: 'from-black/85 via-stone-950/70 to-transparent',
-      accentColor: '#c59b27'
-    },
-    {
-      id: 2,
-      badge: 'CRAZY VALUE OFFERS • SAVE ON BUNDLES',
-      title: 'COMPLETE 3-IN-1 REGIMEN BOX',
-      subtitle: 'Full size Herbal Hair Oil (120ml) + Dail Beauty Cream + Hand & Foot Whitening Cream at special package price PKR 1,499.',
-      highlight: 'Free Delivery on Rs. 2,000+ Nationwide',
-      buttonText: 'CLAIM BUNDLE DEAL',
-      secondaryButtonText: 'VIEW ALL OFFERS',
-      targetCategory: 'bundles',
-      productIndex: 4, // Complete Trio Set
+      productIndex: 1,
       image: '/images/dail_hero_banner_golden.jpg',
       bgGradient: 'from-black/85 via-stone-950/70 to-transparent',
       accentColor: '#d0473e'
@@ -54,6 +26,7 @@ export const HeroSection: React.FC = () => {
 
   // Auto-advance slides every 6 seconds
   useEffect(() => {
+    if (slides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 6000);
@@ -68,7 +41,8 @@ export const HeroSection: React.FC = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
-  const slide = slides[currentSlide];
+  const slideIndex = currentSlide >= slides.length ? 0 : currentSlide;
+  const slide = slides[slideIndex];
 
   const handlePrimaryAction = () => {
     setSelectedCategory(slide.targetCategory);
@@ -76,7 +50,9 @@ export const HeroSection: React.FC = () => {
   };
 
   const handleSecondaryAction = () => {
-    const prod = PRODUCTS[slide.productIndex] || PRODUCTS[0];
+    const prod = (typeof slide.productIndex === 'number' && PRODUCTS[slide.productIndex])
+      ? PRODUCTS[slide.productIndex]
+      : PRODUCTS[0];
     setSelectedProduct(prod);
     setCurrentPage('product-detail');
   };

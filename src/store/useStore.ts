@@ -9,9 +9,135 @@ import type {
   ProductReview, 
   CategoryItem, 
   StoreSettings,
-  Coupon 
+  Coupon,
+  HeroSlide,
+  CustomPage,
+  FaqItem
 } from '../types';
 import { PRODUCTS, REVIEWS } from '../data/products';
+
+export const INITIAL_HERO_SLIDES: HeroSlide[] = [
+  {
+    id: 'slide-1',
+    badge: 'EXPORT QUALITY 5-DAY BEAUTY PLAN',
+    title: 'ORGANIC RADIANCE WITHOUT STEROIDS',
+    subtitle: 'Make your skin bright, soft, fresh, healthy & glowing without thinning or harmful mercury.',
+    highlight: 'Strictly 0% Clobetasol or Bleach',
+    buttonText: 'SHOP BEST SELLERS',
+    secondaryButtonText: 'EXPLORE BEAUTY CREAM',
+    targetCategory: 'cream',
+    productIndex: 1, // Dail Beauty Cream
+    image: '/images/dail_hero_banner_golden.jpg',
+    bgGradient: 'from-black/85 via-stone-950/70 to-transparent',
+    accentColor: '#d0473e'
+  },
+  {
+    id: 'slide-2',
+    badge: '100% PURE BOTANICAL INFUSION (120ML)',
+    title: 'STOP ACUTE HAIR FALL AT THE ROOT',
+    subtitle: 'Powered with cold-pressed rosemary bio-actives, mountain amla & kalonji for rapid regrowth in 14 days.',
+    highlight: 'Proven Export Quality Batch',
+    buttonText: 'SHOP HAIR CARE',
+    secondaryButtonText: 'VIEW HERBAL HAIR OIL',
+    targetCategory: 'hair-care',
+    productIndex: 0, // Dail Hair Oil
+    image: '/images/dail_full_collection.jpg',
+    bgGradient: 'from-black/85 via-stone-950/70 to-transparent',
+    accentColor: '#c59b27'
+  },
+  {
+    id: 'slide-3',
+    badge: 'CRAZY VALUE OFFERS • SAVE ON BUNDLES',
+    title: 'COMPLETE 3-IN-1 REGIMEN BOX',
+    subtitle: 'Full size Herbal Hair Oil (120ml) + Dail Beauty Cream + Hand & Foot Whitening Cream at special package price PKR 1,499.',
+    highlight: 'Free Delivery on Rs. 2,000+ Nationwide',
+    buttonText: 'CLAIM BUNDLE DEAL',
+    secondaryButtonText: 'VIEW ALL OFFERS',
+    targetCategory: 'bundles',
+    productIndex: 4, // Complete Trio Set
+    image: '/images/dail_hero_banner_golden.jpg',
+    bgGradient: 'from-black/85 via-stone-950/70 to-transparent',
+    accentColor: '#d0473e'
+  }
+];
+
+export const INITIAL_CUSTOM_PAGES: CustomPage[] = [
+  {
+    id: 'page-shipping',
+    title: 'Shipping & Delivery Policy',
+    slug: 'shipping-policy',
+    content: `### Fast Nationwide Cash On Delivery (COD)\n\nAt Dail Cosmetics, we deliver across all cities, towns, and villages of Pakistan through verified premium courier networks (Trax, TCS, Leopard, PostEx).\n\n- **Delivery Time:** Karachi, Lahore, Islamabad & Rawalpindi: 2-3 business days. All other cities & regional towns: 3-5 business days.\n- **Delivery Charges:** FREE Delivery on all orders of PKR 2,000 and above! For orders below PKR 2,000, flat fee of PKR 199 applies.\n- **Order Tracking:** As soon as your parcel is booked, you receive an automated SMS and WhatsApp update with your live tracking number.`,
+    showInFooter: true,
+    showInNav: false,
+    updatedAt: '2026-10-11'
+  },
+  {
+    id: 'page-returns',
+    title: '7-Day Return & Exchange Guarantee',
+    slug: 'return-policy',
+    content: `### 100% Risk-Free Customer Promise\n\nYour satisfaction and skin safety are our highest priorities.\n\n- **7-Day Hassle-Free Exchange:** If your product arrives damaged, leaked, or incorrect, simply notify us on WhatsApp (0313 6361218) within 7 days of receiving your package.\n- **Condition:** Items must be in original condition with product packaging.\n- **Fast Resolution:** We promptly send an immediate free replacement or process a 100% instant refund via JazzCash, EasyPaisa, or Bank Transfer.`,
+    showInFooter: true,
+    showInNav: false,
+    updatedAt: '2026-10-11'
+  },
+  {
+    id: 'page-steroid-free',
+    title: 'Our 0% Steroid & Pure Organic Pledge',
+    slug: 'steroid-free-promise',
+    content: `### Certified Without Steroids & Harmful Mercury\n\nUnlike conventional beauty creams in Pakistan that contain dangerous prescription steroids (Clobetasol, Betamethasone) and toxic mercury, **Dail Beauty Cream** is 100% steroid-free.\n\n- **No Skin Thinning:** Will never cause redness, capillary damage, or facial hair growth.\n- **Pure Botanical Herbs:** Herbal Hair Oil is formulated with mountain amla, kalonji, pure cold-pressed rosemary, and fenugreek bio-actives.\n- **Export Grade Testing:** Rigorously lab-inspected to meet international organic standards.`,
+    showInFooter: true,
+    showInNav: true,
+    updatedAt: '2026-10-11'
+  },
+  {
+    id: 'page-terms',
+    title: 'Terms & Conditions',
+    slug: 'terms-and-conditions',
+    content: `### Store Terms & Conditions\n\nBy placing an order on Dail Cosmetics Pakistan (dailcosmetics.vercel.app or via WhatsApp 0313 6361218), you agree to our standard store terms.\n\n- All prices are listed in Pakistani Rupees (PKR).\n- We reserve the right to verify phone numbers prior to dispatch.\n- Cash on delivery orders require cash payment to the courier rider upon delivery.`,
+    showInFooter: true,
+    showInNav: false,
+    updatedAt: '2026-10-11'
+  }
+];
+
+export const INITIAL_FAQS: FaqItem[] = [
+  {
+    id: 'faq-1',
+    question: 'Kya Dail Beauty Cream mein waqai koi steroid ya mercury nahi hai?',
+    urduQuestion: 'کیا ڈیل بیوٹی کریم میں واقعی کوئی اسٹیرائیڈ یا کیمیکل نہیں ہے؟',
+    answer: 'Bilkul nahi! Dail Beauty Cream aur Hand & Foot Cream 100% WITHOUT STEROID formulate ki gayi hain. Isme koi Clobetasol, Betamethasone ya Mercury shamil nahi hai jo skin ko patla kare ya dhoop mein laal kare. Yeh 100% safe, halal aur export quality botanical actives (Saffron, Niacinamide, Pure Vitamin E) par mabni hai.'
+  },
+  {
+    id: 'faq-2',
+    question: 'Dail Premium Herbal Hair Oil (120ml) se hair fall kitne din mein rukta hai?',
+    urduQuestion: 'ڈیل ہربل ہیئر آئل سے بال گرنا کتنے دن میں بند ہوتے ہیں؟',
+    answer: 'Hamare 14,000+ Pakistani customers ke verified feedback ke mutabiq, 10 se 14 din ke baqaeda istemal (haftay mein 3 baar massage) se severe hair fall 80% se 90% tak ruk jata hai. Cold-pressed Rosemary aur Kalonji (Black Seed) oil dormant roots ko stimulate karke baby hairs ki growth ko tezi se shuru karte hain.'
+  },
+  {
+    id: 'faq-3',
+    question: 'Delivery charges aur delivery time kya hai Pakistan mein?',
+    urduQuestion: 'ڈلیوری کا وقت اور چارجز کیا ہیں؟',
+    answer: 'Hum Trax Express aur TCS Logistics ke zariye poore Pakistan (Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Peshawar, Quetta aur tamam shehron) mein 2 se 4 working days mein doorstep delivery karte hain. Rs. 2,000 se zyada ke order par Free Delivery hai. Standard flat courier fee sirf Rs. 199 hai.'
+  },
+  {
+    id: 'faq-4',
+    question: 'Kya Cash On Delivery (COD) available hai?',
+    urduQuestion: 'کیا کیش آن ڈلیوری کی سہولت موجود ہے؟',
+    answer: 'Jee haan! Cash On Delivery (COD) poore Pakistan mein 100% available hai. Aap courier rider se apna tamper-proof parcel receive karein aur doorstep par cash ada karein. Iske ilawa JazzCash, Easypaisa aur Direct Bank Transfer bhi supported hain.'
+  },
+  {
+    id: 'faq-5',
+    question: 'Kya main direct WhatsApp par order book karwa sakta hoon?',
+    urduQuestion: 'کیا واٹس ایپ پر آرڈر دیا جا سکتا ہے؟',
+    answer: 'Jee bilkul! Website par maujood kisi bhi "Order on WhatsApp" button par click karein ya hamari official helpline 0313 6361218 par apna naam, pata aur desired products send karein. Hamara representative foran order confirm karega.'
+  },
+  {
+    id: 'faq-6',
+    question: 'Dail Hand & Foot Cream dark knuckles aur rough heels par kab asar karti hai?',
+    urduQuestion: 'ہینڈ اینڈ فٹ کریم سے کتنا جلد رزلٹ ملتا ہے؟',
+    answer: 'Dail Hand & Foot Cream ka 3-Action Repair formula (Deep Moisture, Multi-Effect, Barrier Repair) 5 se 7 din ke raat ko istemal se dark knuckles, tanned haath paon aur cracked heels ko bohot tezi se naram aur glowing banata hai.'
+  }
+];
 
 export const INITIAL_COUPONS: Coupon[] = [
   { id: 'c-1', code: 'ORGANIC10', discountPercentage: 10, minOrderAmount: 0, isActive: true, usageCount: 42 },
@@ -161,7 +287,29 @@ interface StoreState {
   deleteCoupon: (id: string) => void;
   toggleCouponStatus: (id: string) => void;
 
-  // Store Configuration & Settings (Shopify Grade)
+  // Hero Banners & Slider Management
+  heroSlides: HeroSlide[];
+  addHeroSlide: (slide: Omit<HeroSlide, 'id'>) => void;
+  updateHeroSlide: (id: string, updates: Partial<HeroSlide>) => void;
+  deleteHeroSlide: (id: string) => void;
+  resetHeroSlidesToDefault: () => void;
+
+  // Custom Pages Management
+  customPages: CustomPage[];
+  activeCustomPageSlug: string | null;
+  setActiveCustomPageSlug: (slug: string | null) => void;
+  addCustomPage: (page: Omit<CustomPage, 'id' | 'updatedAt'>) => void;
+  updateCustomPage: (id: string, updates: Partial<CustomPage>) => void;
+  deleteCustomPage: (id: string) => void;
+  navigateToCustomPage: (slug: string) => void;
+
+  // Store FAQs Management
+  faqs: FaqItem[];
+  addFaq: (faq: Omit<FaqItem, 'id'>) => void;
+  updateFaq: (id: string, updates: Partial<FaqItem>) => void;
+  deleteFaq: (id: string) => void;
+
+  // Store Configuration & Settings
   storeSettings: StoreSettings;
   updateStoreSettings: (updates: Partial<StoreSettings>) => void;
   getWhatsAppCleanNumber: () => string;
@@ -333,6 +481,80 @@ export const useStore = create<StoreState>()(
       toggleCouponStatus: (id) => {
         set((state) => ({
           coupons: state.coupons.map((c) => c.id === id ? { ...c, isActive: !c.isActive } : c)
+        }));
+      },
+
+      // Hero Banners & Slider Management
+      heroSlides: INITIAL_HERO_SLIDES,
+      addHeroSlide: (slide) => {
+        const newSlide: HeroSlide = {
+          ...slide,
+          id: `slide-${Date.now()}`
+        };
+        set((state) => ({ heroSlides: [...state.heroSlides, newSlide] }));
+      },
+      updateHeroSlide: (id, updates) => {
+        set((state) => ({
+          heroSlides: state.heroSlides.map((s) => (s.id === id ? { ...s, ...updates } : s))
+        }));
+      },
+      deleteHeroSlide: (id) => {
+        set((state) => ({
+          heroSlides: state.heroSlides.filter((s) => s.id !== id)
+        }));
+      },
+      resetHeroSlidesToDefault: () => {
+        set({ heroSlides: INITIAL_HERO_SLIDES });
+      },
+
+      // Custom Pages Management
+      customPages: INITIAL_CUSTOM_PAGES,
+      activeCustomPageSlug: null,
+      setActiveCustomPageSlug: (slug) => set({ activeCustomPageSlug: slug }),
+      addCustomPage: (page) => {
+        const newPage: CustomPage = {
+          ...page,
+          id: `page-${Date.now()}`,
+          updatedAt: new Date().toISOString().split('T')[0]
+        };
+        set((state) => ({ customPages: [...state.customPages, newPage] }));
+      },
+      updateCustomPage: (id, updates) => {
+        set((state) => ({
+          customPages: state.customPages.map((p) =>
+            p.id === id
+              ? { ...p, ...updates, updatedAt: new Date().toISOString().split('T')[0] }
+              : p
+          )
+        }));
+      },
+      deleteCustomPage: (id) => {
+        set((state) => ({
+          customPages: state.customPages.filter((p) => p.id !== id)
+        }));
+      },
+      navigateToCustomPage: (slug) => {
+        set({ activeCustomPageSlug: slug, currentPage: 'custom-page' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      // FAQs Management
+      faqs: INITIAL_FAQS,
+      addFaq: (faq) => {
+        const newFaq: FaqItem = {
+          ...faq,
+          id: `faq-${Date.now()}`
+        };
+        set((state) => ({ faqs: [...state.faqs, newFaq] }));
+      },
+      updateFaq: (id, updates) => {
+        set((state) => ({
+          faqs: state.faqs.map((f) => (f.id === id ? { ...f, ...updates } : f))
+        }));
+      },
+      deleteFaq: (id) => {
+        set((state) => ({
+          faqs: state.faqs.filter((f) => f.id !== id)
         }));
       },
 
@@ -562,13 +784,16 @@ export const useStore = create<StoreState>()(
       }
     }),
     {
-      name: 'dail_cosmetics_store_v5',
+      name: 'dail_cosmetics_store_v6',
       partialize: (state) => ({
         products: state.products,
         categories: state.categories,
         concerns: state.concerns,
         coupons: state.coupons,
         storeSettings: state.storeSettings,
+        heroSlides: state.heroSlides,
+        customPages: state.customPages,
+        faqs: state.faqs,
         orders: state.orders,
         reviews: state.reviews,
         wishlist: state.wishlist,

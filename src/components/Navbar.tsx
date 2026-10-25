@@ -14,7 +14,9 @@ export const Navbar: React.FC = () => {
     setSelectedCategory,
     setIsSearchOpen,
     storeSettings,
-    getWhatsAppUrl
+    getWhatsAppUrl,
+    customPages,
+    navigateToCustomPage
   } = useStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -226,6 +228,21 @@ export const Navbar: React.FC = () => {
               Contact
             </button>
 
+            {/* Dynamic Custom Pages with showInNav */}
+            {customPages.filter((p) => p.showInNav).map((p) => (
+              <button
+                key={p.id}
+                onClick={() => {
+                  navigateToCustomPage(p.slug);
+                  setMobileMenuOpen(false);
+                }}
+                className="hover:text-[#d0473e] transition-colors cursor-pointer py-1 font-semibold truncate max-w-[150px]"
+                title={p.title}
+              >
+                {p.title}
+              </button>
+            ))}
+
           </div>
 
           {/* Right Header Action Icons */}
@@ -391,10 +408,24 @@ export const Navbar: React.FC = () => {
 
               <button
                 onClick={() => navigateTo('contact')}
-                className="w-full text-left py-3 px-3 hover:bg-stone-50 hover:text-[#d0473e] rounded-xs"
+                className="w-full text-left py-3 px-3 hover:bg-stone-50 hover:text-[#d0473e] rounded-xs border-b border-stone-100"
               >
                 Contact Us
               </button>
+
+              {/* Dynamic Custom Pages in Mobile Menu */}
+              {customPages.filter((p) => p.showInNav).map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    navigateToCustomPage(p.slug);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full text-left py-3 px-3 hover:bg-stone-50 hover:text-[#d0473e] rounded-xs border-b border-stone-100 font-semibold"
+                >
+                  {p.title}
+                </button>
+              ))}
 
             </div>
 
