@@ -573,19 +573,26 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Write a Review Modal */}
       {isReviewModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-stone-200 space-y-5">
-            <div className="flex items-center justify-between">
-              <h3 className="font-serif-luxury text-xl font-bold text-stone-900">
-                Write a Verified Review
-              </h3>
-              <button
-                onClick={() => setIsReviewModalOpen(false)}
-                className="p-1 rounded-full text-stone-400 hover:text-stone-700"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+        <div 
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => setIsReviewModalOpen(false)}
+        >
+          <div className="min-h-full flex items-start sm:items-center justify-center p-2 sm:p-4 text-center">
+            <div 
+              className="w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl border border-stone-200 space-y-5 my-4 text-left animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="font-heading text-lg sm:text-xl font-bold uppercase text-stone-900">
+                  Write a Verified Review
+                </h3>
+                <button
+                  onClick={() => setIsReviewModalOpen(false)}
+                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
             <form onSubmit={handleReviewSubmit} className="space-y-4 text-xs">
               <div>
@@ -651,7 +658,8 @@ export const ProductDetailPage: React.FC = () => {
             </form>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
     </div>
   );

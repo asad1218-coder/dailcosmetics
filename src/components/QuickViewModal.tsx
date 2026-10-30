@@ -20,7 +20,8 @@ export const QuickViewModal: React.FC = () => {
 
   const product = quickViewProduct;
   const isFavorited = isInWishlist(product.id);
-  const images = [product.image, ...product.galleryImages];
+  // Deduplicate images
+  const images = Array.from(new Set([product.image, ...(product.galleryImages || [])]));
 
   const handleClose = () => {
     setQuickViewProduct(null);
@@ -42,76 +43,76 @@ export const QuickViewModal: React.FC = () => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-xs animate-in fade-in duration-200"
       onClick={handleClose}
     >
-      <div 
-        className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden relative"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close Button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white/80 hover:bg-stone-100 text-stone-700 shadow-xs transition-colors"
+      <div className="min-h-full flex items-start sm:items-center justify-center p-2 sm:p-4 text-center">
+        <div 
+          className="w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-200 overflow-hidden relative my-3 sm:my-6 text-left animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
         >
-          <X className="w-5 h-5" />
-        </button>
+          {/* Close Button - Always visible at top right */}
+          <button
+            onClick={handleClose}
+            className="absolute top-3 right-3 z-30 p-2 rounded-full bg-white/90 hover:bg-stone-100 text-stone-700 shadow-xs border border-stone-200 transition-colors cursor-pointer"
+            title="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8">
-          
-          {/* Left: Gallery Column */}
-          <div className="space-y-4">
-            <div className="relative aspect-4/5 sm:aspect-square w-full rounded-2xl overflow-hidden bg-gradient-to-b from-[#fdfbf7] via-[#f7f2ea] to-[#eee4d6] border border-stone-200/80 p-4 flex flex-col items-center justify-center group">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.95)_0%,rgba(247,242,234,0.4)_65%,transparent_100%)] pointer-events-none" />
-              <img
-                src={images[selectedImgIndex] || product.image}
-                alt={product.name}
-                className="max-h-[85%] max-w-[90%] object-contain drop-shadow-[0_18px_24px_rgba(123,62,29,0.2)] transition-transform duration-300 group-hover:scale-105 z-10"
-              />
-              <div className="w-3/4 h-2.5 rounded-[50%] bg-[#7b3e1d]/14 blur-[5px] -mt-1.5 pointer-events-none z-5" />
-              {product.badge && (
-                <span className="absolute top-3 left-3 bg-[#7b3e1d] text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs z-20">
-                  {product.badge}
-                </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-8">
+            
+            {/* Left: Gallery Column */}
+            <div className="space-y-3">
+              <div className="relative aspect-square w-full max-h-[300px] sm:max-h-[420px] rounded-2xl overflow-hidden bg-white border border-stone-200 p-2 sm:p-4 flex items-center justify-center group mx-auto">
+                <img
+                  src={images[selectedImgIndex] || product.image}
+                  alt={product.name}
+                  className="max-h-[260px] sm:max-h-[380px] max-w-full w-auto h-auto object-contain mx-auto drop-shadow-md transition-transform duration-300 group-hover:scale-102 z-10"
+                />
+                {product.badge && (
+                  <span className="absolute top-3 left-3 bg-[#7b3e1d] text-white text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs z-20">
+                    {product.badge}
+                  </span>
+                )}
+              </div>
+
+              {/* Thumbnail selector */}
+              {images.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1 justify-center sm:justify-start">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImgIndex(idx)}
+                      className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 p-1 transition-all shrink-0 cursor-pointer ${
+                        selectedImgIndex === idx ? 'border-[#7b3e1d] ring-2 ring-[#7b3e1d]/20 shadow-xs' : 'border-stone-200 opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={img} alt="Thumbnail" className="w-full h-full object-contain" />
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
 
-            {/* Thumbnail selector */}
-            {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {images.map((img, idx) => (
+            {/* Right: Product Details Column */}
+            <div className="flex flex-col justify-between space-y-4">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pr-8">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d0473e]">
+                    Official Dail Packaging • {product.volume}
+                  </span>
                   <button
-                    key={idx}
-                    onClick={() => setSelectedImgIndex(idx)}
-                    className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
-                      selectedImgIndex === idx ? 'border-[#7b3e1d] shadow-xs' : 'border-stone-200 opacity-70 hover:opacity-100'
-                    }`}
+                    onClick={() => toggleWishlist(product.id)}
+                    className="p-1.5 rounded-full hover:bg-stone-100 text-stone-500 hover:text-rose-500 transition-colors cursor-pointer"
                   >
-                    <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+                    <Heart className={`w-5 h-5 ${isFavorited ? 'fill-rose-500 text-rose-500' : ''}`} />
                   </button>
-                ))}
-              </div>
-            )}
-          </div>
+                </div>
 
-          {/* Right: Product Details Column */}
-          <div className="flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#c59b27]">
-                  Official Dail Packaging • {product.volume}
-                </span>
-                <button
-                  onClick={() => toggleWishlist(product.id)}
-                  className="p-2 rounded-full hover:bg-stone-100 text-stone-500 hover:text-rose-500 transition-colors"
-                >
-                  <Heart className={`w-5 h-5 ${isFavorited ? 'fill-rose-500 text-rose-500' : ''}`} />
-                </button>
-              </div>
-
-              <h2 className="font-serif-luxury text-2xl sm:text-3xl font-bold text-stone-900 leading-tight">
-                {product.name}
-              </h2>
+                <h2 className="font-heading text-xl sm:text-2xl font-extrabold text-stone-900 leading-tight uppercase">
+                  {product.name}
+                </h2>
 
               {/* Rating */}
               <div className="flex items-center gap-2">
@@ -212,11 +213,10 @@ export const QuickViewModal: React.FC = () => {
               </div>
 
             </div>
-
           </div>
-
         </div>
       </div>
     </div>
+  </div>
   );
 };
