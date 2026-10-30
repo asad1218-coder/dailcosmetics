@@ -41,7 +41,6 @@ export const ProductDetailPage: React.FC = () => {
   const [activeViewMode, setActiveViewMode] = useState<'gallery' | '3d'>('gallery');
   const [selectedImage, setSelectedImage] = useState<string>(product.image);
   const [quantity, setQuantity] = useState<number>(1);
-  const [selectedSize, setSelectedSize] = useState<'standard' | 'jumbo'>('standard');
   const [openAccordion, setOpenAccordion] = useState<'description' | 'benefits' | 'ingredients' | 'howToUse' | 'safety' | null>('description');
   const [addedToast, setAddedToast] = useState(false);
   const [calcCity, setCalcCity] = useState('Lahore');
@@ -55,24 +54,11 @@ export const ProductDetailPage: React.FC = () => {
   const allImages = [product.image, ...product.galleryImages];
   const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
 
-  // Dynamic price calculation based on size variant
-  const currentPrice = selectedSize === 'jumbo'
-    ? Math.round(product.price * 1.85) // 15% discount for jumbo
-    : product.price;
-
-  const currentOriginalPrice = product.originalPrice
-    ? (selectedSize === 'jumbo' ? Math.round(product.originalPrice * 2) : product.originalPrice)
-    : undefined;
+  const currentPrice = product.price;
+  const currentOriginalPrice = product.originalPrice;
 
   const handleAddToCart = () => {
-    addToCart(
-      {
-        ...product,
-        price: currentPrice,
-        volume: selectedSize === 'jumbo' ? (product.volume.includes('120') ? '240ml Jumbo Pack' : '100g Double Pack') : product.volume
-      },
-      quantity
-    );
+    addToCart(product, quantity);
     setAddedToast(true);
     setTimeout(() => setAddedToast(false), 2500);
   };
@@ -100,7 +86,7 @@ export const ProductDetailPage: React.FC = () => {
   };
 
   const whatsappMessage = encodeURIComponent(
-    `As-salamu alaykum Dail Cosmetics!\n\nI want to order:\n• ${product.name} (${selectedSize === 'jumbo' ? 'Jumbo Pack' : product.volume})\nQty: ${quantity} • Total: Rs. ${(currentPrice * quantity).toLocaleString()}\nCity: ${calcCity}\n\nPlease confirm delivery!`
+    `As-salamu alaykum Dail Cosmetics!\n\nI want to order:\n• ${product.name} (${product.volume})\nQty: ${quantity} • Total: Rs. ${(currentPrice * quantity).toLocaleString()}\nCity: ${calcCity}\n\nPlease confirm delivery!`
   );
 
   return (
@@ -191,7 +177,7 @@ export const ProductDetailPage: React.FC = () => {
                   </span>
                 )}
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-[#7b3e1d]">
-                  {selectedSize === 'jumbo' ? (product.volume.includes('120') ? '240ml' : '100g') : product.volume}
+                  {product.volume}
                 </span>
               </div>
             </div>
@@ -277,56 +263,6 @@ export const ProductDetailPage: React.FC = () => {
               )}
             </div>
 
-            {/* Urgent Stock Remaining Notice */}
-            <div className="flex items-center justify-between text-xs bg-amber-50/70 p-3 rounded-xl border border-amber-200/80">
-              <div className="flex items-center gap-2 text-stone-800 font-medium">
-                <Clock className="w-4 h-4 text-[#7b3e1d] animate-pulse" />
-                <span>Only <strong>7 units remaining</strong> in today's export batch!</span>
-              </div>
-              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                Ready to Dispatch
-              </span>
-            </div>
-
-            {/* Size / Volume Switcher */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-stone-800 block">Select Package Size:</label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setSelectedSize('standard')}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                    selectedSize === 'standard'
-                      ? 'border-[#7b3e1d] bg-amber-50/50 shadow-xs'
-                      : 'border-stone-200 bg-white hover:bg-stone-50'
-                  }`}
-                >
-                  <strong className="block text-xs font-bold text-stone-900">
-                    {product.volume} Standard
-                  </strong>
-                  <span className="text-[11px] text-[#7b3e1d] font-bold">Rs. {product.price.toLocaleString()}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedSize('jumbo')}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                    selectedSize === 'jumbo'
-                      ? 'border-[#7b3e1d] bg-amber-50/50 shadow-xs'
-                      : 'border-stone-200 bg-white hover:bg-stone-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <strong className="block text-xs font-bold text-stone-900">
-                      {product.volume.includes('120') ? '240ml Family Pack' : '100g Double Glow'}
-                    </strong>
-                    <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded-sm">Save 15%</span>
-                  </div>
-                  <span className="text-[11px] text-[#7b3e1d] font-bold">Rs. {Math.round(product.price * 1.85).toLocaleString()}</span>
-                </button>
-              </div>
-            </div>
-
             {/* Estimated Delivery Calculator */}
             <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2 text-stone-700">
@@ -385,7 +321,7 @@ export const ProductDetailPage: React.FC = () => {
               </button>
 
               <a
-                href={getWhatsAppUrl(`As-salamu alaykum Dail Cosmetics!\n\nI want to order:\n• ${product.name} (${selectedSize === 'jumbo' ? 'Jumbo Pack' : product.volume})\nQty: ${quantity} • Total: Rs. ${(currentPrice * quantity).toLocaleString()}\nCity: ${calcCity}\n\nPlease confirm delivery!`)}
+                href={getWhatsAppUrl(`As-salamu alaykum Dail Cosmetics!\n\nI want to order:\n• ${product.name} (${product.volume})\nQty: ${quantity} • Total: Rs. ${(currentPrice * quantity).toLocaleString()}\nCity: ${calcCity}\n\nPlease confirm delivery!`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 px-4 rounded-xs bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer uppercase tracking-wider"
