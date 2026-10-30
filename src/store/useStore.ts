@@ -15,6 +15,7 @@ import type {
   FaqItem
 } from '../types';
 import { PRODUCTS, REVIEWS } from '../data/products';
+import { apiService } from '../services/api';
 
 export const INITIAL_HERO_SLIDES: HeroSlide[] = [
   {
@@ -363,11 +364,117 @@ interface StoreState {
   updateOrderStatus: (orderId: string, status: OrderDetails['status'], courierName?: string, trackingNumber?: string) => void;
   deleteOrder: (orderId: string) => void;
   trackOrderById: (orderIdOrPhone: string) => OrderDetails | null;
+
+  // Cloud Database Sync (MongoDB Atlas)
+  cloudConnected: boolean;
+  cloudConfigured: boolean;
+  isSyncing: boolean;
+  lastSyncedAt: string | null;
+  cloudMessage: string;
+  checkCloudStatus: () => Promise<void>;
+  syncFromCloud: () => Promise<void>;
+  syncToCloud: () => Promise<void>;
 }
 
 export const useStore = create<StoreState>()(
   persist(
     (set, get) => ({
+      // Cloud Database Sync (MongoDB Atlas)
+      cloudConnected: false,
+      cloudConfigured: false,
+      isSyncing: false,
+      lastSyncedAt: null,
+      cloudMessage: 'Connecting to MongoDB Atlas...',
+
+      checkCloudStatus: async () => {
+        const health = await apiService.checkHealth();
+        set({
+          cloudConnected: health.connected,
+          cloudConfigured: health.configured,
+          cloudMessage: health.message,
+        });
+      },
+
+      syncFromCloud: async () => {
+        set({ isSyncing: true });
+        try {
+          const health = await apiService.checkHealth();
+          set({
+            cloudConnected: health.connected,
+            cloudConfigured: health.configured,
+            cloudMessage: health.message,
+          });
+
+          if (health.connected) {
+            const result = await apiService.fetchStoreData();
+            if (result.ok) {
+              if (result.data) {
+                set((state) => ({
+                  products: result.data?.products?.length ? result.data.products : state.products,
+                  categories: result.data?.categories?.length ? result.data.categories : state.categories,
+                  storeSettings: result.data?.storeSettings ? result.data.storeSettings : state.storeSettings,
+                  heroSlides: result.data?.heroSlides?.length ? result.data.heroSlides : state.heroSlides,
+                  coupons: result.data?.coupons?.length ? result.data.coupons : state.coupons,
+                  reviews: result.data?.reviews?.length ? result.data.reviews : state.reviews,
+                  faqs: result.data?.faqs?.length ? result.data.faqs : state.faqs,
+                  customPages: result.data?.customPages?.length ? result.data.customPages : state.customPages,
+                  lastSyncedAt: new Date().toLocaleTimeString(),
+                }));
+              } else {
+                // Empty database: initial seed
+                const current = get();
+                await apiService.pushStoreData({
+                  products: current.products,
+                  categories: current.categories,
+                  storeSettings: current.storeSettings,
+                  heroSlides: current.heroSlides,
+                  coupons: current.coupons,
+                  reviews: current.reviews,
+                  faqs: current.faqs,
+                  customPages: current.customPages,
+                });
+                set({ lastSyncedAt: new Date().toLocaleTimeString() });
+              }
+            }
+
+            // Sync orders from MongoDB
+            const cloudOrders = await apiService.fetchOrders();
+            if (cloudOrders && cloudOrders.length > 0) {
+              set({ orders: cloudOrders });
+            }
+          }
+        } catch (err) {
+          console.warn('Sync failed:', err);
+        } finally {
+          set({ isSyncing: false });
+        }
+      },
+
+      syncToCloud: async () => {
+        set({ isSyncing: true });
+        try {
+          const current = get();
+          const res = await apiService.pushStoreData({
+            products: current.products,
+            categories: current.categories,
+            storeSettings: current.storeSettings,
+            heroSlides: current.heroSlides,
+            coupons: current.coupons,
+            reviews: current.reviews,
+            faqs: current.faqs,
+            customPages: current.customPages,
+            orders: current.orders,
+          });
+          if (res.connected) {
+            set({
+              cloudConnected: true,
+              lastSyncedAt: new Date().toLocaleTimeString(),
+            });
+          }
+        } finally {
+          set({ isSyncing: false });
+        }
+      },
       // Navigation
       currentPage: 'home',
       setCurrentPage: (page) => {
@@ -572,6 +679,7 @@ export const useStore = create<StoreState>()(
             tiktokUrl1: updates.tiktokUrl1 !== undefined ? updates.tiktokUrl1 : (state.storeSettings.tiktokUrl1 || state.storeSettings.tiktokUrl),
             tiktokUrl2: updates.tiktokUrl2 !== undefined ? updates.tiktokUrl2 : (state.storeSettings.tiktokUrl2 || '')
           };
+          apiService.debouncedPushStoreData({ storeSettings: newSettings });
           return { storeSettings: newSettings };
         });
       },
@@ -606,22 +714,29 @@ export const useStore = create<StoreState>()(
           modelType: productData.modelType || 'bottle',
         };
 
-        set((state) => ({
-          products: [newProduct, ...state.products]
-        }));
+        set((state) => {
+          const newProducts = [newProduct, ...state.products];
+          apiService.debouncedPushStoreData({ products: newProducts });
+          return { products: newProducts };
+        });
         return newProduct;
       },
 
       updateProduct: (id, updates) => {
-        set((state) => ({
-          products: state.products.map((p) => (p.id === id ? { ...p, ...updates } : p)),
-          selectedProduct: state.selectedProduct?.id === id ? { ...state.selectedProduct, ...updates } : state.selectedProduct
-        }));
+        set((state) => {
+          const updatedProducts = state.products.map((p) => (p.id === id ? { ...p, ...updates } : p));
+          apiService.debouncedPushStoreData({ products: updatedProducts });
+          return {
+            products: updatedProducts,
+            selectedProduct: state.selectedProduct?.id === id ? { ...state.selectedProduct, ...updates } : state.selectedProduct
+          };
+        });
       },
 
       deleteProduct: (id) => {
         set((state) => {
           const remainingProducts = state.products.filter((p) => p.id !== id);
+          apiService.debouncedPushStoreData({ products: remainingProducts });
           return {
             products: remainingProducts,
             cart: state.cart.filter((item) => item.product.id !== id),
@@ -633,9 +748,11 @@ export const useStore = create<StoreState>()(
       },
 
       toggleProductStock: (id) => {
-        set((state) => ({
-          products: state.products.map((p) => (p.id === id ? { ...p, inStock: !p.inStock } : p))
-        }));
+        set((state) => {
+          const updated = state.products.map((p) => (p.id === id ? { ...p, inStock: !p.inStock } : p));
+          apiService.debouncedPushStoreData({ products: updated });
+          return { products: updated };
+        });
       },
 
       resetProductsToDefault: () => {
@@ -643,6 +760,11 @@ export const useStore = create<StoreState>()(
           products: PRODUCTS,
           categories: INITIAL_CATEGORIES,
           concerns: INITIAL_CONCERNS,
+          storeSettings: INITIAL_SETTINGS
+        });
+        apiService.debouncedPushStoreData({
+          products: PRODUCTS,
+          categories: INITIAL_CATEGORIES,
           storeSettings: INITIAL_SETTINGS
         });
       },
@@ -656,22 +778,30 @@ export const useStore = create<StoreState>()(
           slug,
           id: `cat-${Date.now()}`
         };
-        set((state) => ({ categories: [...state.categories, newCat] }));
+        set((state) => {
+          const updated = [...state.categories, newCat];
+          apiService.debouncedPushStoreData({ categories: updated });
+          return { categories: updated };
+        });
       },
       updateCategory: (idOrSlug, updates) => {
-        set((state) => ({
-          categories: state.categories.map((c) =>
+        set((state) => {
+          const updated = state.categories.map((c) =>
             c.id === idOrSlug || c.slug === idOrSlug ? { ...c, ...updates } : c
-          )
-        }));
+          );
+          apiService.debouncedPushStoreData({ categories: updated });
+          return { categories: updated };
+        });
       },
       deleteCategory: (idOrSlug) => {
         if (idOrSlug === 'all' || idOrSlug === 'cat-all') return;
         set((state) => {
           const target = state.categories.find((c) => c.id === idOrSlug || c.slug === idOrSlug);
           const targetSlug = target ? target.slug : idOrSlug;
+          const updated = state.categories.filter((c) => c.id !== idOrSlug && c.slug !== idOrSlug);
+          apiService.debouncedPushStoreData({ categories: updated });
           return {
-            categories: state.categories.filter((c) => c.id !== idOrSlug && c.slug !== idOrSlug),
+            categories: updated,
             selectedCategory: state.selectedCategory === targetSlug ? 'all' : state.selectedCategory
           };
         });
@@ -766,6 +896,9 @@ export const useStore = create<StoreState>()(
           discountPercentage: 0
         }));
 
+        // Persist order to MongoDB Atlas cloud database
+        apiService.saveOrder(newOrder);
+
         return newOrder;
       },
 
@@ -791,6 +924,9 @@ export const useStore = create<StoreState>()(
               }
             : state.currentOrder
         }));
+
+        // Update in MongoDB Atlas
+        apiService.updateOrderStatus(orderId, status, trackingNumber);
       },
 
       deleteOrder: (orderId) => {
@@ -798,6 +934,9 @@ export const useStore = create<StoreState>()(
           orders: state.orders.filter((o) => o.orderId !== orderId),
           currentOrder: state.currentOrder?.orderId === orderId ? null : state.currentOrder
         }));
+
+        // Delete from MongoDB Atlas
+        apiService.deleteOrder(orderId);
       },
 
       trackOrderById: (orderIdOrPhone) => {
@@ -830,3 +969,16 @@ export const useStore = create<StoreState>()(
     }
   )
 );
+
+// Auto-connect and sync with MongoDB Atlas on client load
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    useStore.getState().syncFromCloud();
+  }, 350);
+
+  // Sync on tab focus so updates from client or another admin show immediately
+  window.addEventListener('focus', () => {
+    useStore.getState().syncFromCloud();
+  });
+}
+

@@ -41,7 +41,11 @@ import {
   Image as ImageIcon,
   Sliders,
   FileText,
-  HelpCircle
+  HelpCircle,
+  Database,
+  RefreshCw,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 
 export const AdminPortal: React.FC = () => {
@@ -87,8 +91,17 @@ export const AdminPortal: React.FC = () => {
     updateStoreSettings,
     setCurrentPage,
     setSelectedProduct,
-    getWhatsAppUrl
+    getWhatsAppUrl,
+    cloudConnected,
+    cloudConfigured,
+    isSyncing,
+    lastSyncedAt,
+    cloudMessage,
+    syncFromCloud,
+    syncToCloud
   } = useStore();
+
+  const [showDbGuideModal, setShowDbGuideModal] = useState(false);
 
   // Authentication State (Password Protected)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -482,6 +495,72 @@ export const AdminPortal: React.FC = () => {
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Lock & Logout</span>
             </button>
+          </div>
+        </div>
+
+        {/* MongoDB Atlas Multi-Admin Cloud Database Sync Bar */}
+        <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+          cloudConnected 
+            ? 'bg-emerald-50/90 border-emerald-200 text-emerald-950 shadow-xs' 
+            : 'bg-amber-50/90 border-amber-200 text-amber-950 shadow-xs'
+        }`}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                cloudConnected ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'
+              }`}>
+                {cloudConnected ? <Wifi className="w-5 h-5" /> : <Database className="w-5 h-5" />}
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <h4 className="font-bold text-sm">
+                    {cloudConnected ? 'MongoDB Atlas Cloud Database: Connected & Live' : 'MongoDB Atlas Multi-Admin: Setup Pending'}
+                  </h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                    cloudConnected ? 'bg-emerald-200/80 text-emerald-900' : 'bg-amber-200/80 text-amber-900'
+                  }`}>
+                    {cloudConnected ? 'Multi-Admin Active' : 'Offline / Local Mode'}
+                  </span>
+                </div>
+                <p className="text-xs text-stone-600">
+                  {cloudConnected 
+                    ? `Aap aur aapka client dono real-time synced hain. Last sync: ${lastSyncedAt || 'Abhi'}` 
+                    : 'Aap aur aapke client k sync k liye Vercel me MONGODB_URI add karein (Guide available).'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+              <button
+                type="button"
+                onClick={() => syncFromCloud()}
+                disabled={isSyncing}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 text-stone-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 text-[#7b3e1d] ${isSyncing ? 'animate-spin' : ''}`} />
+                <span>{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
+              </button>
+
+              {cloudConnected && (
+                <button
+                  type="button"
+                  onClick={() => syncToCloud()}
+                  disabled={isSyncing}
+                  className="px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <span>Push to Cloud</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setShowDbGuideModal(true)}
+                className="px-3 py-1.5 rounded-xl bg-[#7b3e1d] hover:bg-[#602f14] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+                <span>Database Guide</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1827,6 +1906,66 @@ export const AdminPortal: React.FC = () => {
 
               <form onSubmit={handleSaveSettings} className="space-y-4">
                 
+                {/* MongoDB Atlas Multi-Admin Cloud Database Card */}
+                <div className={`p-4 sm:p-5 rounded-2xl border space-y-3 ${
+                  cloudConnected 
+                    ? 'bg-emerald-50/70 border-emerald-200' 
+                    : 'bg-stone-50 border-stone-200'
+                }`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        cloudConnected ? 'bg-emerald-600 text-white' : 'bg-stone-800 text-white'
+                      }`}>
+                        <Database className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-stone-900">
+                          MongoDB Atlas Cloud Database (Multi-Admin Sync)
+                        </h4>
+                        <span className="text-[11px] text-stone-500">
+                          {cloudConnected 
+                            ? 'Live sync active across all computers and phones' 
+                            : 'Currently running in local browser cache'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                      cloudConnected ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                    }`}>
+                      {cloudConnected ? 'Connected' : 'Setup Pending'}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-stone-600">
+                    {cloudConnected
+                      ? `MongoDB Atlas successfully connected. All product edits, category changes, and orders are automatically synced between you and your client in real time.`
+                      : `Aap aur aapka client dono aik hi waqt website use aur edit kar sakein is k liye Vercel Environment Variables me MONGODB_URI add karein.`}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => syncFromCloud()}
+                      disabled={isSyncing}
+                      className="px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 border border-stone-300 text-stone-800 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                      <span>{isSyncing ? 'Checking...' : 'Check Connection'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowDbGuideModal(true)}
+                      className="px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <HelpCircle className="w-3.5 h-3.5" />
+                      <span>View Step-by-Step Guide</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Admin Secret Password Setting (Client Key Management) */}
                 <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2">
                   <div className="flex items-center justify-between">
@@ -2352,6 +2491,134 @@ export const AdminPortal: React.FC = () => {
                 <span>Total Due:</span>
                 <span className="text-[#7b3e1d]">Rs. {inspectingOrder.total.toLocaleString()}</span>
               </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: MONGODB ATLAS SETUP GUIDE (STEP-BY-STEP)
+      ========================================================================= */}
+      {showDbGuideModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full space-y-6 shadow-2xl my-8 border border-stone-200">
+            
+            <div className="flex items-start justify-between pb-3 border-b border-stone-100">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold">
+                    <Database className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-serif-luxury text-xl font-bold text-stone-900">
+                    MongoDB Atlas Setup Guide
+                  </h3>
+                </div>
+                <p className="text-xs text-stone-500">
+                  Yeh 4 aasan steps follow karein ta k aap aur aapka client dono aik hi waqt website use aur edit kar sakein.
+                </p>
+              </div>
+              <button 
+                onClick={() => setShowDbGuideModal(false)}
+                className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Current Status Badge */}
+            <div className={`p-3.5 rounded-2xl border text-xs flex items-center justify-between ${
+              cloudConnected 
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-900' 
+                : 'bg-amber-50 border-amber-200 text-amber-900'
+            }`}>
+              <div className="flex items-center gap-2 font-bold">
+                {cloudConnected ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-amber-600" />}
+                <span>Status: {cloudConnected ? 'MongoDB Atlas Live & Synced!' : 'Pending Connection (Local Mode Active)'}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => syncFromCloud()}
+                disabled={isSyncing}
+                className="px-2.5 py-1 bg-white hover:bg-stone-50 border border-stone-200 rounded-lg font-bold text-[11px] text-stone-800 flex items-center gap-1 cursor-pointer"
+              >
+                <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
+                <span>Test Connection</span>
+              </button>
+            </div>
+
+            {/* 4 Steps */}
+            <div className="space-y-4 text-xs">
+              
+              {/* Step 1 */}
+              <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-stone-900 text-sm">
+                  <span className="w-5 h-5 rounded-full bg-[#7b3e1d] text-white flex items-center justify-center text-xs">1</span>
+                  <span>MongoDB Atlas Par Free Account Banayein</span>
+                </div>
+                <p className="text-stone-600 pl-7">
+                  <a href="https://www.mongodb.com/cloud/atlas/register" target="_blank" rel="noreferrer" className="text-blue-600 underline font-bold">
+                    mongodb.com/cloud/atlas
+                  </a> par ja kar free account banayein aur free tier <strong>"M0 (Free)"</strong> cluster select karein.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-stone-900 text-sm">
+                  <span className="w-5 h-5 rounded-full bg-[#7b3e1d] text-white flex items-center justify-center text-xs">2</span>
+                  <span>Username, Password & Network Access Set Karein</span>
+                </div>
+                <ul className="list-disc list-inside text-stone-600 pl-7 space-y-1">
+                  <li><strong>Security &gt; Database Access:</strong> Aik user banayein (e.g. <code>dailadmin</code>) aur password set karein.</li>
+                  <li><strong>Security &gt; Network Access:</strong> <em>"Add IP Address"</em> par click kar k <code>0.0.0.0/0</code> (Allow Access from Anywhere) select karein.</li>
+                </ul>
+              </div>
+
+              {/* Step 3 */}
+              <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-stone-900 text-sm">
+                  <span className="w-5 h-5 rounded-full bg-[#7b3e1d] text-white flex items-center justify-center text-xs">3</span>
+                  <span>Connection String Copy Karein</span>
+                </div>
+                <p className="text-stone-600 pl-7">
+                  Clusters page par <strong>"Connect"</strong> button dabayein &gt; <strong>"Drivers" (Node.js)</strong> select karein. Connection string copy karein:
+                </p>
+                <div className="pl-7">
+                  <code className="block p-2.5 bg-stone-900 text-emerald-400 font-mono text-[11px] rounded-xl overflow-x-auto">
+                    mongodb+srv://dailadmin:&lt;password&gt;@cluster0.abcde.mongodb.net/dail_cosmetics?retryWrites=true&amp;w=majority
+                  </code>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-emerald-950 text-sm">
+                  <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs">4</span>
+                  <span>Vercel Environment Variables Me Add Karein</span>
+                </div>
+                <p className="text-stone-700 pl-7">
+                  Vercel dashboard me <strong>dail-cosmetics</strong> project open karein &gt; <strong>Settings &gt; Environment Variables</strong>:
+                </p>
+                <div className="pl-7 space-y-1 font-mono text-[11px]">
+                  <div><strong>Key:</strong> <code>MONGODB_URI</code></div>
+                  <div><strong>Value:</strong> <em>(Paste your connection string with real password)</em></div>
+                </div>
+                <p className="text-stone-600 pl-7 pt-1">
+                  Save karne k baad Vercel par redeploy kar dein ya humein batayein hum 1 click me deploy kar denge!
+                </p>
+              </div>
+
+            </div>
+
+            <div className="flex justify-end pt-3 border-t border-stone-100">
+              <button
+                type="button"
+                onClick={() => setShowDbGuideModal(false)}
+                className="px-6 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs cursor-pointer"
+              >
+                Theek Hai, Samajh Gaya
+              </button>
             </div>
 
           </div>
