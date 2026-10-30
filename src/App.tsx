@@ -1,12 +1,6 @@
 import React from 'react';
 import { useStore } from './store/useStore';
 import { Navbar } from './components/Navbar';
-import { HeroSection } from './components/HeroSection';
-import { CategoryCirclesBar } from './components/CategoryCirclesBar';
-import { BestSellersSection } from './components/BestSellersSection';
-import { SplitPromoBanners } from './components/SplitPromoBanners';
-import { ValueBundlesSection } from './components/ValueBundlesSection';
-import { ShoppableReelsSection } from './components/ShoppableReelsSection';
 import { TrustPillarsBar } from './components/TrustPillarsBar';
 import { CatalogPage } from './components/CatalogPage';
 import { ProductDetailPage } from './components/ProductDetailPage';
@@ -109,43 +103,28 @@ export function App() {
 export default App;
 
 /**
- * Home View: 100% Golden Pearl Pakistan Clone Architecture & Layout
+ * Home View: Direct Catalog Products Layout (Navbar ke foran baad products, without hero, split banners & videos)
  */
 const HomeView: React.FC = () => {
   return (
     <div className="space-y-0">
       
-      {/* 1. Full-Width Hero Banner Carousel */}
-      <HeroSection />
+      {/* 1. All Products Catalog Grid directly below Navbar */}
+      <CatalogPage />
 
-      {/* 2. Shop By Category Circles (Golden Pearl Signature) */}
-      <CategoryCirclesBar />
-
-      {/* 3. Best Sellers Section with Tabbed Category Filter (All | Skincare | Hair Care | Bundles) */}
-      <BestSellersSection />
-
-      {/* 4. Split 2-Column Mid Promotional Banners */}
-      <SplitPromoBanners />
-
-      {/* 5. Crazy Offers & Value Bundles Spotlight */}
-      <ValueBundlesSection />
-
-      {/* 6. Shoppable Instagram Reels / Video Widget (@ FOLLOW US ON INSTAGRAM) */}
-      <ShoppableReelsSection />
-
-      {/* 7. Golden Pearl Trust Pillars & Guarantees (Free Delivery, COD, 0% Steroids, Helpline) */}
+      {/* 2. Golden Pearl Trust Pillars & Guarantees (Free Delivery, COD, 0% Steroids, Helpline) */}
       <TrustPillarsBar />
 
-      {/* 8. Medical Truth: "Why Without Steroids?" Trust Comparison */}
+      {/* 3. Medical Truth: "Why Without Steroids?" Trust Comparison */}
       <SteroidComparisonSection />
 
-      {/* 9. Verified Customer Reviews Infinite Marquee */}
+      {/* 4. Verified Customer Reviews Infinite Marquee */}
       <ReviewsMarquee />
 
-      {/* 10. Customer Reviews Grid & Interactive Submission */}
+      {/* 5. Customer Reviews Grid & Interactive Submission */}
       <ReviewsGridSection />
 
-      {/* 11. Customer FAQ Accordion */}
+      {/* 6. Customer FAQ Accordion */}
       <FaqSection />
 
     </div>
