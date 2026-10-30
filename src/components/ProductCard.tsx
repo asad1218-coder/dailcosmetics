@@ -27,6 +27,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleCardClick = () => {
     setSelectedProduct(product);
     setCurrentPage('product-detail');
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {

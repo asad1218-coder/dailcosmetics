@@ -25,6 +25,7 @@ export const SearchModal: React.FC = () => {
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
     setCurrentPage('product-detail');
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setIsSearchOpen(false);
   };
 

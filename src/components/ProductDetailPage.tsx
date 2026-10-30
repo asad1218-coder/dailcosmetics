@@ -41,7 +41,7 @@ export const ProductDetailPage: React.FC = () => {
   const [activeViewMode, setActiveViewMode] = useState<'gallery' | '3d'>('gallery');
   const [selectedImage, setSelectedImage] = useState<string>(product.image);
   const [quantity, setQuantity] = useState<number>(1);
-  const [openAccordion, setOpenAccordion] = useState<'description' | 'benefits' | 'ingredients' | 'howToUse' | 'safety' | null>('description');
+  const [activeTab, setActiveTab] = useState<'overview' | 'benefits' | 'ingredients' | 'howToUse'>('overview');
   const [addedToast, setAddedToast] = useState(false);
   const [calcCity, setCalcCity] = useState('Lahore');
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -50,8 +50,15 @@ export const ProductDetailPage: React.FC = () => {
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [newReviewComment, setNewReviewComment] = useState('');
 
+  // Automatically scroll to the top and reset image whenever product changes
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    setSelectedImage(product.image);
+    setActiveViewMode('gallery');
+  }, [product.id, product.image]);
+
   const isFavorited = isInWishlist(product.id);
-  const allImages = [product.image, ...product.galleryImages];
+  const allImages = [product.image, ...(product.galleryImages || [])];
   const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
 
   const currentPrice = product.price;
@@ -85,41 +92,37 @@ export const ProductDetailPage: React.FC = () => {
     alert('Thank you! Your verified review has been published.');
   };
 
-  const whatsappMessage = encodeURIComponent(
-    `As-salamu alaykum Dail Cosmetics!\n\nI want to order:\n• ${product.name} (${product.volume})\nQty: ${quantity} • Total: Rs. ${(currentPrice * quantity).toLocaleString()}\nCity: ${calcCity}\n\nPlease confirm delivery!`
-  );
-
   return (
-    <div className="w-full bg-[#fbf9f5] min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="w-full bg-[#fbf9f5] min-h-screen py-3 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         
         {/* Breadcrumb Navigation */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pb-1">
           <button
             onClick={() => setCurrentPage('shop')}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-stone-600 hover:text-[#7b3e1d] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-[#7b3e1d] transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to All Formulations</span>
           </button>
 
-          <span className="text-xs text-stone-400">
+          <span className="text-xs text-stone-400 hidden sm:inline-block">
             Catalog / {product.category.toUpperCase()} / {product.name}
           </span>
         </div>
 
         {/* Product Showcase Two-Column Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
           
           {/* Left Column: Interactive Visuals (Gallery + 3D Toggle) */}
-          <div className="lg:col-span-6 space-y-4">
+          <div className="lg:col-span-6 space-y-3 sm:space-y-4">
             
             {/* View Mode Toggle Switcher */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 p-1 bg-stone-100 rounded-xl border border-stone-200 text-xs">
+              <div className="flex items-center gap-1 p-1 bg-stone-100 rounded-xl border border-stone-200 text-xs">
                 <button
                   onClick={() => setActiveViewMode('gallery')}
-                  className={`px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer ${
                     activeViewMode === 'gallery'
                       ? 'bg-white text-stone-900 shadow-xs'
                       : 'text-stone-600 hover:text-stone-900'
@@ -129,68 +132,68 @@ export const ProductDetailPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setActiveViewMode('3d')}
-                  className={`px-3.5 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
                     activeViewMode === '3d'
                       ? 'bg-[#7b3e1d] text-white shadow-xs'
                       : 'text-stone-600 hover:text-stone-900'
                   }`}
                 >
                   <Box className="w-3.5 h-3.5" />
-                  <span>360° Real 3D Studio</span>
+                  <span>360° 3D Studio</span>
                 </button>
               </div>
 
               <button
                 onClick={() => toggleWishlist(product.id)}
-                className="p-2.5 rounded-full bg-white border border-stone-200 text-stone-500 hover:text-rose-500 shadow-xs transition-colors cursor-pointer"
+                className="p-2 sm:p-2.5 rounded-full bg-white border border-stone-200 text-stone-500 hover:text-rose-500 shadow-xs transition-colors cursor-pointer"
                 title="Save to Wishlist"
               >
                 <Heart className={`w-4 h-4 ${isFavorited ? 'fill-rose-500 text-rose-500' : ''}`} />
               </button>
             </div>
 
-            {/* Display Stage Container */}
-            <div className="relative aspect-square w-full rounded-2xl sm:rounded-3xl bg-white sm:bg-gradient-to-b sm:from-[#fdfbf7] sm:via-[#f7f2ea] sm:to-[#eee4d6] border border-stone-200 shadow-sm overflow-hidden flex flex-col items-center justify-center p-2 sm:p-6 group">
+            {/* Display Stage Container - Carefully bounded for mobile viewport */}
+            <div className="relative aspect-square w-full max-h-[320px] sm:max-h-[460px] rounded-2xl sm:rounded-3xl bg-white sm:bg-gradient-to-b sm:from-[#fdfbf7] sm:via-[#f7f2ea] sm:to-[#eee4d6] border border-stone-200 shadow-xs overflow-hidden flex flex-col items-center justify-center p-2 sm:p-6 group mx-auto">
               
               {/* Radial Spotlight Glow */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.95)_0%,rgba(247,242,234,0.4)_65%,transparent_100%)] pointer-events-none" />
 
               {activeViewMode === 'gallery' ? (
-                <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-2">
+                <div className="relative z-10 w-full h-full flex items-center justify-center p-2">
                   <img
                     src={selectedImage}
                     alt={product.name}
-                    className="w-full h-full object-contain max-h-[350px] sm:max-h-[460px] drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] group-hover:scale-104 transition-transform duration-500"
+                    className="max-h-[280px] sm:max-h-[420px] max-w-full w-auto h-auto object-contain mx-auto drop-shadow-md group-hover:scale-102 transition-transform duration-300"
                   />
                 </div>
               ) : (
-                <div className="relative z-10 w-full h-full bg-gradient-to-b from-[#fbf9f5] to-[#ece5d8] rounded-2xl overflow-hidden">
+                <div className="relative z-10 w-full h-full bg-gradient-to-b from-[#fbf9f5] to-[#ece5d8] rounded-xl overflow-hidden">
                   <Dali3DCanvas initialModel={product.modelType as any} className="w-full h-full" />
                 </div>
               )}
 
               {/* Badges on Top Left */}
-              <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-10 pointer-events-none">
+              <div className="absolute top-3 left-3 flex flex-col gap-1 z-10 pointer-events-none">
                 {product.badge && (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#7b3e1d] text-white uppercase tracking-wider shadow-xs">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-[#7b3e1d] text-white uppercase tracking-wider shadow-xs">
                     {product.badge}
                   </span>
                 )}
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-[#7b3e1d]">
+                <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-amber-100 text-[#7b3e1d]">
                   {product.volume}
                 </span>
               </div>
             </div>
 
             {/* Gallery Thumbnails */}
-            {activeViewMode === 'gallery' && (
-              <div className="flex gap-3 overflow-x-auto pb-1">
+            {activeViewMode === 'gallery' && allImages.length > 1 && (
+              <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-1 pt-1 justify-center sm:justify-start">
                 {allImages.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img)}
-                    className={`w-20 h-20 rounded-2xl overflow-hidden bg-white border-2 p-1 transition-all shrink-0 cursor-pointer ${
-                      selectedImage === img ? 'border-[#7b3e1d] shadow-xs' : 'border-stone-200 opacity-70 hover:opacity-100'
+                    className={`w-14 h-14 sm:w-18 sm:h-18 rounded-xl overflow-hidden bg-white border-2 p-1 transition-all shrink-0 cursor-pointer ${
+                      selectedImage === img ? 'border-[#7b3e1d] ring-2 ring-[#7b3e1d]/20 shadow-xs' : 'border-stone-200 opacity-70 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="Thumbnail" className="w-full h-full object-contain" />
@@ -201,9 +204,9 @@ export const ProductDetailPage: React.FC = () => {
           </div>
 
           {/* Right Column: Buying Box & Specifications */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-4 sm:space-y-5">
             
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <span className="text-[11px] font-heading font-extrabold uppercase tracking-[0.2em] text-[#d0473e] block">
                 Official Dail Packaging • {product.volume}
               </span>
@@ -213,15 +216,10 @@ export const ProductDetailPage: React.FC = () => {
               {product.urduName && (
                 <p className="text-[#c59b27] font-serif text-base sm:text-lg italic">{product.urduName}</p>
               )}
-              {/* Product Tagline & Full Description */}
+              {/* Product Tagline */}
               {product.tagline && (
-                <p className="text-stone-700 text-xs sm:text-sm font-semibold leading-relaxed border-l-2 border-[#d0473e] pl-3 py-0.5 bg-stone-50 rounded-r-xs">
+                <p className="text-stone-700 text-xs sm:text-sm font-semibold leading-relaxed border-l-2 border-[#d0473e] pl-3 py-1 bg-stone-50 rounded-r-xs mt-1">
                   {product.tagline}
-                </p>
-              )}
-              {product.description && (
-                <p className="text-stone-600 text-xs sm:text-sm leading-relaxed font-normal pt-1">
-                  {product.description}
                 </p>
               )}
             </div>
@@ -264,14 +262,14 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Estimated Delivery Calculator */}
-            <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 text-stone-700">
                 <Truck className="w-4 h-4 text-[#7b3e1d]" />
                 <span>Estimate delivery to:</span>
                 <select
                   value={calcCity}
                   onChange={(e) => setCalcCity(e.target.value)}
-                  className="bg-white border border-stone-300 rounded-lg px-2 py-1 font-bold text-stone-900 cursor-pointer"
+                  className="bg-white border border-stone-300 rounded-lg px-2 py-1 font-bold text-stone-900 cursor-pointer text-xs"
                 >
                   {PAKISTAN_CITIES.slice(0, 10).map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -284,12 +282,12 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Quantity & CTA Buttons */}
-            <div className="space-y-3 pt-1">
+            <div className="space-y-2.5 pt-1">
               <div className="flex items-center gap-3">
                 <div className="flex items-center border border-stone-300 rounded-xl overflow-hidden bg-white shadow-xs">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3.5 py-3 text-stone-600 hover:bg-stone-100 transition-colors text-sm font-bold"
+                    className="px-3.5 py-3 text-stone-600 hover:bg-stone-100 transition-colors text-sm font-bold cursor-pointer"
                   >
                     -
                   </button>
@@ -298,7 +296,7 @@ export const ProductDetailPage: React.FC = () => {
                   </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-3.5 py-3 text-stone-600 hover:bg-stone-100 transition-colors text-sm font-bold"
+                    className="px-3.5 py-3 text-stone-600 hover:bg-stone-100 transition-colors text-sm font-bold cursor-pointer"
                   >
                     +
                   </button>
@@ -306,7 +304,7 @@ export const ProductDetailPage: React.FC = () => {
 
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 btn-gp-primary py-3.5 px-6 rounded-xs text-xs sm:text-sm font-heading font-extrabold tracking-[0.16em] flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                  className="flex-1 btn-gp-primary py-3.5 px-4 sm:px-6 rounded-xs text-xs sm:text-sm font-heading font-extrabold tracking-[0.14em] flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>ADD TO CART • RS. {(currentPrice * quantity).toLocaleString()}</span>
@@ -338,116 +336,171 @@ export const ProductDetailPage: React.FC = () => {
               </div>
             )}
 
-            {/* Accordion Specs */}
-            <div className="pt-4 border-t border-stone-200 space-y-2.5">
-              
-              {/* 1. Full Product Description Accordion */}
-              <div className="rounded-xl border border-stone-200 bg-white overflow-hidden shadow-2xs">
-                <button
-                  onClick={() => setOpenAccordion(openAccordion === 'description' ? null : 'description')}
-                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50 cursor-pointer"
-                >
-                  <span className="font-heading uppercase tracking-wider">Product Overview & Details</span>
-                  {openAccordion === 'description' ? <ChevronUp className="w-4 h-4 text-[#d0473e]" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-                {openAccordion === 'description' && (
-                  <div className="p-4 pt-2 text-xs text-stone-600 space-y-3 border-t border-stone-100 leading-relaxed">
-                    <p>{product.description}</p>
-                    {product.fullIngredients && (
-                      <div className="p-2.5 bg-stone-50 rounded-xs border border-stone-200 text-[11px]">
-                        <strong className="text-stone-800 block mb-1">Full Ingredients:</strong>
-                        <span className="text-stone-600">{product.fullIngredients}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
+            {/* 3 Key Trust Badges directly under buttons */}
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-stone-200 text-center">
+              <div className="p-2 bg-white rounded-lg border border-stone-200/80 shadow-2xs">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
+                <span className="text-[10px] font-bold text-stone-800 block">0% Steroids</span>
+                <span className="text-[9px] text-stone-500">Pure Organic</span>
               </div>
-
-              {/* 2. Clinical Benefits Accordion */}
-              <div className="rounded-xl border border-stone-200 bg-white overflow-hidden">
-                <button
-                  onClick={() => setOpenAccordion(openAccordion === 'benefits' ? null : 'benefits')}
-                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50 cursor-pointer"
-                >
-                  <span className="font-heading uppercase tracking-wider">Clinical Benefits & Results</span>
-                  {openAccordion === 'benefits' ? <ChevronUp className="w-4 h-4 text-[#d0473e]" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-                {openAccordion === 'benefits' && (
-                  <div className="p-4 pt-0 text-xs text-stone-600 space-y-2 border-t border-stone-100">
-                    {product.benefits.map((b, i) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                        <span>{b}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              <div className="p-2 bg-white rounded-lg border border-stone-200/80 shadow-2xs">
+                <Truck className="w-4 h-4 text-[#7b3e1d] mx-auto mb-1" />
+                <span className="text-[10px] font-bold text-stone-800 block">Fast COD</span>
+                <span className="text-[9px] text-stone-500">All Pakistan</span>
               </div>
-
-              <div className="rounded-xl border border-stone-200 bg-white overflow-hidden">
-                <button
-                  onClick={() => setOpenAccordion(openAccordion === 'ingredients' ? null : 'ingredients')}
-                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50"
-                >
-                  <span>Active Herbal Ingredients</span>
-                  {openAccordion === 'ingredients' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-                {openAccordion === 'ingredients' && (
-                  <div className="p-4 pt-0 text-xs text-stone-600 space-y-2 border-t border-stone-100">
-                    {product.keyIngredients.map((item, i) => (
-                      <div key={i} className="p-2 bg-stone-50 rounded-lg">
-                        <strong className="text-stone-900 block">{item.name}</strong>
-                        <p className="text-[11px] text-stone-500 mt-0.5">{item.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              <div className="p-2 bg-white rounded-lg border border-stone-200/80 shadow-2xs">
+                <CheckCircle2 className="w-4 h-4 text-amber-600 mx-auto mb-1" />
+                <span className="text-[10px] font-bold text-stone-800 block">Original Sealed</span>
+                <span className="text-[9px] text-stone-500">Tamper-Proof</span>
               </div>
-
-              <div className="rounded-xl border border-stone-200 bg-white overflow-hidden">
-                <button
-                  onClick={() => setOpenAccordion(openAccordion === 'howToUse' ? null : 'howToUse')}
-                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50"
-                >
-                  <span>How To Apply (Ritual Routine)</span>
-                  {openAccordion === 'howToUse' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-                {openAccordion === 'howToUse' && (
-                  <div className="p-4 pt-0 text-xs text-stone-600 space-y-2 border-t border-stone-100">
-                    {product.howToUse.map((step, i) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <span className="w-4 h-4 rounded-full bg-amber-100 text-[#7b3e1d] font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
-                          {i + 1}
-                        </span>
-                        <span>{step}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="rounded-xl border border-stone-200 bg-white overflow-hidden">
-                <button
-                  onClick={() => setOpenAccordion(openAccordion === 'safety' ? null : 'safety')}
-                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50"
-                >
-                  <span>0% Steroid & Tamper-Proof Seal Guarantee</span>
-                  {openAccordion === 'safety' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-                {openAccordion === 'safety' && (
-                  <div className="p-4 pt-0 text-xs text-stone-600 leading-relaxed border-t border-stone-100">
-                    <p>
-                      Every batch of Dail Cosmetics is factory sealed with our signature embossed gold lids. 
-                      Strictly certified 0% betamethasone, 0% clobetasol, and 0% toxic mercury. Safe for lifelong daily use by Pakistani men and women.
-                    </p>
-                  </div>
-                )}
-              </div>
-
             </div>
 
           </div>
 
+        </div>
+
+        {/* Dedicated Product Description & Specifications Section (Always Clear & Visible) */}
+        <div className="pt-4 border-t border-stone-200 space-y-6">
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-xs overflow-hidden">
+            {/* Section Header with Tabs */}
+            <div className="border-b border-stone-200 bg-stone-50/70 p-2 sm:p-3 flex flex-wrap gap-2">
+              <button
+                onClick={() => setActiveTab('overview')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'overview'
+                    ? 'bg-white text-stone-900 shadow-xs border border-stone-200'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                Product Description & Overview
+              </button>
+              <button
+                onClick={() => setActiveTab('benefits')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'benefits'
+                    ? 'bg-white text-stone-900 shadow-xs border border-stone-200'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                Key Benefits & Results
+              </button>
+              <button
+                onClick={() => setActiveTab('ingredients')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'ingredients'
+                    ? 'bg-white text-stone-900 shadow-xs border border-stone-200'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                Active Herbal Ingredients
+              </button>
+              <button
+                onClick={() => setActiveTab('howToUse')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'howToUse'
+                    ? 'bg-white text-stone-900 shadow-xs border border-stone-200'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                How To Apply
+              </button>
+            </div>
+
+            {/* Tab Contents */}
+            <div className="p-5 sm:p-8">
+              {activeTab === 'overview' && (
+                <div className="space-y-4 max-w-4xl">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#d0473e]" />
+                    <h2 className="font-heading text-lg sm:text-xl font-extrabold text-stone-900 uppercase">
+                      Detailed Formulation Overview
+                    </h2>
+                  </div>
+                  <p className="text-stone-700 text-sm sm:text-base leading-relaxed font-normal">
+                    {product.description}
+                  </p>
+                  {product.fullIngredients && (
+                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-xs">
+                      <strong className="text-stone-900 block mb-1">Official Certified Ingredients:</strong>
+                      <span className="text-stone-600 leading-relaxed">{product.fullIngredients}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'benefits' && (
+                <div className="space-y-4 max-w-4xl">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <h2 className="font-heading text-lg sm:text-xl font-extrabold text-stone-900 uppercase">
+                      Clinically Proven Results & Benefits
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    {product.benefits.map((b, i) => (
+                      <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                        <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <span className="text-xs sm:text-sm text-stone-800 font-medium">{b}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'ingredients' && (
+                <div className="space-y-4 max-w-4xl">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#7b3e1d]" />
+                    <h2 className="font-heading text-lg sm:text-xl font-extrabold text-stone-900 uppercase">
+                      Active Herbal Actives & Clinical Purpose
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    {product.keyIngredients.map((item, i) => (
+                      <div key={i} className="p-3.5 bg-stone-50 rounded-xl border border-stone-200">
+                        <strong className="text-stone-900 text-xs sm:text-sm block">{item.name}</strong>
+                        <p className="text-xs text-stone-600 mt-1 leading-relaxed">{item.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'howToUse' && (
+                <div className="space-y-4 max-w-4xl">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-[#7b3e1d]" />
+                    <h2 className="font-heading text-lg sm:text-xl font-extrabold text-stone-900 uppercase">
+                      Recommended Application Ritual
+                    </h2>
+                  </div>
+                  <div className="space-y-3 pt-2">
+                    {product.howToUse.map((step, i) => (
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-stone-50 border border-stone-200">
+                        <span className="w-6 h-6 rounded-full bg-[#7b3e1d] text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                          {i + 1}
+                        </span>
+                        <span className="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium">{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Tamper-Proof 0% Steroid Seal Banner */}
+            <div className="border-t border-stone-200 bg-amber-50/50 p-4 sm:p-5 flex flex-col sm:flex-row items-center gap-3">
+              <ShieldCheck className="w-6 h-6 text-emerald-700 shrink-0" />
+              <div className="text-center sm:text-left text-xs">
+                <strong className="text-stone-900 block font-heading uppercase tracking-wide">
+                  100% Original Dail Quality & 0% Steroids Certified Guarantee
+                </strong>
+                <span className="text-stone-600">
+                  Every batch of Dail Cosmetics is factory sealed with our signature embossed gold lids. Strictly certified 0% betamethasone, 0% clobetasol, and 0% toxic mercury. Safe for lifelong daily use by Pakistani men and women.
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Customer Reviews Section on PDP */}

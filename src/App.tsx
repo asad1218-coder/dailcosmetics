@@ -43,6 +43,11 @@ export function App() {
     };
   }, [setCurrentPage]);
 
+  // Always reset scroll to the top when navigating between pages
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [currentPage]);
+
   // If Admin Portal is active, render the dedicated private workspace directly
   if (currentPage === 'admin') {
     return <AdminPortal />;

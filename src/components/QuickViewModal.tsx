@@ -36,6 +36,7 @@ export const QuickViewModal: React.FC = () => {
   const handleViewFullPage = () => {
     setSelectedProduct(product);
     setCurrentPage('product-detail');
+    window.scrollTo({ top: 0, behavior: 'instant' });
     handleClose();
   };
 
