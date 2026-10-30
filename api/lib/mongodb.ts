@@ -1,7 +1,9 @@
 import { MongoClient, Db } from 'mongodb';
 
-const uri = process.env.MONGODB_URI || '';
-const dbName = process.env.MONGODB_DB || 'dail_cosmetics';
+declare const process: any;
+
+const uri: string = (typeof process !== 'undefined' && process.env?.MONGODB_URI) || '';
+const dbName: string = (typeof process !== 'undefined' && process.env?.MONGODB_DB) || 'dail_cosmetics';
 
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
@@ -11,7 +13,6 @@ export async function connectToDatabase(): Promise<{ client: MongoClient | null;
     return { client: null, db: null };
   }
 
-  // Use cached connection if available
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
@@ -20,7 +21,7 @@ export async function connectToDatabase(): Promise<{ client: MongoClient | null;
     const client = new MongoClient(uri, {
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
-    });
+    } as any);
 
     await client.connect();
     const db = client.db(dbName);

@@ -1,47 +1,24 @@
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { connectToDatabase } from './lib/mongodb';
 
-async function parseJsonBody(req: IncomingMessage): Promise<any> {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
-    req.on('end', () => {
-      if (!data) return resolve({});
-      try {
-        resolve(JSON.parse(data));
-      } catch (err) {
-        reject(err);
-      }
-    });
-    req.on('error', err => reject(err));
-  });
-}
-
-export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  res.setHeader('Content-Type', 'application/json');
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    res.statusCode = 200;
-    res.end();
-    return;
+    return res.status(200).end();
   }
 
   try {
     const { db } = await connectToDatabase();
     if (!db) {
-      res.statusCode = 200;
-      res.end(JSON.stringify({
+      return res.status(200).json({
         ok: false,
         connected: false,
         orders: [],
         message: 'MongoDB not connected. Running in local mode.'
-      }));
-      return;
+      });
     }
 
     const collection = db.collection('orders');
@@ -53,45 +30,38 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         .limit(200)
         .toArray();
 
-      res.statusCode = 200;
-      res.end(JSON.stringify({
+      return res.status(200).json({
         ok: true,
         connected: true,
         orders
-      }));
-      return;
+      });
     }
 
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
     if (req.method === 'POST') {
-      const order = await parseJsonBody(req);
-      if (!order || !order.orderId) {
-        res.statusCode = 400;
-        res.end(JSON.stringify({ ok: false, error: 'orderId is required' }));
-        return;
+      if (!body || !body.orderId) {
+        return res.status(400).json({ ok: false, error: 'orderId is required' });
       }
 
       await collection.updateOne(
-        { orderId: order.orderId },
-        { $set: { ...order, updatedAt: new Date() } },
+        { orderId: body.orderId },
+        { $set: { ...body, updatedAt: new Date() } },
         { upsert: true }
       );
 
-      res.statusCode = 201;
-      res.end(JSON.stringify({
+      return res.status(201).json({
         ok: true,
         connected: true,
         message: 'Order saved to MongoDB Atlas.',
-        orderId: order.orderId
-      }));
-      return;
+        orderId: body.orderId
+      });
     }
 
     if (req.method === 'PATCH') {
-      const { orderId, status, trackingNumber } = await parseJsonBody(req);
+      const { orderId, status, trackingNumber } = body || {};
       if (!orderId) {
-        res.statusCode = 400;
-        res.end(JSON.stringify({ ok: false, error: 'orderId is required' }));
-        return;
+        return res.status(400).json({ ok: false, error: 'orderId is required' });
       }
 
       const updateFields: any = { updatedAt: new Date() };
@@ -103,29 +73,23 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         { $set: updateFields }
       );
 
-      res.statusCode = 200;
-      res.end(JSON.stringify({ ok: true, connected: true }));
-      return;
+      return res.status(200).json({ ok: true, connected: true });
     }
 
     if (req.method === 'DELETE') {
-      const { orderId } = await parseJsonBody(req);
+      const { orderId } = body || {};
       if (orderId) {
         await collection.deleteOne({ orderId });
       }
-      res.statusCode = 200;
-      res.end(JSON.stringify({ ok: true, connected: true }));
-      return;
+      return res.status(200).json({ ok: true, connected: true });
     }
 
-    res.statusCode = 405;
-    res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+    return res.status(405).json({ ok: false, error: 'Method not allowed' });
   } catch (error: any) {
     console.error('Error in /api/orders:', error);
-    res.statusCode = 500;
-    res.end(JSON.stringify({
+    return res.status(500).json({
       ok: false,
       error: error?.message || 'Internal server error'
-    }));
+    });
   }
 }
