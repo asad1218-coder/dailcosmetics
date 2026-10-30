@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Sparkles, Send, ShieldCheck, Truck } from 'lucide-
 import type { PageView, ProductCategory } from '../types';
 
 export const Footer: React.FC = () => {
-  const { setCurrentPage, setSelectedCategory, storeSettings, getWhatsAppUrl, customPages, navigateToCustomPage } = useStore();
+  const { setCurrentPage, setSelectedCategory, setSelectedProduct, products, storeSettings, getWhatsAppUrl, customPages, navigateToCustomPage } = useStore();
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -18,6 +18,15 @@ export const Footer: React.FC = () => {
     if (cat) setSelectedCategory(cat);
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToProduct = (productId: string) => {
+    const prod = products.find((p) => p.id === productId);
+    if (prod) {
+      setSelectedProduct(prod);
+      setCurrentPage('product-detail');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -110,37 +119,37 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-xs font-medium text-stone-400">
               <li>
-                <button onClick={() => navigateTo('shop', 'cream')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
+                <button onClick={() => navigateToProduct('dail-beauty-cream')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
                   <span>Dail Beauty Cream (50g)</span>
                   <span className="text-[#d0473e] font-bold">PKR 350</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo('shop', 'hair-care')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
+                <button onClick={() => navigateToProduct('dail-premium-herbal-hair-oil')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
                   <span>Premium Herbal Hair Oil (120ml)</span>
                   <span className="text-[#d0473e] font-bold">PKR 999</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo('shop', 'cream')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
+                <button onClick={() => navigateToProduct('dail-hand-and-foot-whitening-cream')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
                   <span>Hand & Foot Whitening Cream</span>
                   <span className="text-[#d0473e] font-bold">PKR 350</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo('shop', 'bundles')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
+                <button onClick={() => navigateToProduct('dail-glowing-duo-bundle')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
                   <span>Daily Beauty & Hair Oil Duo</span>
                   <span className="text-[#c59b27] font-bold">PKR 1,199</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo('shop', 'bundles')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
+                <button onClick={() => navigateToProduct('dail-complete-regimen-bundle')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
                   <span>Complete 3-in-1 Regimen Box</span>
                   <span className="text-[#c59b27] font-bold">PKR 1,499</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo('shop', 'bundles')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
+                <button onClick={() => navigateToProduct('dail-family-pack-bundle')} className="hover:text-white transition-colors cursor-pointer flex items-center justify-between w-full">
                   <span>Family Double Glow Pack</span>
                   <span className="text-emerald-400 font-bold">Free Delivery</span>
                 </button>

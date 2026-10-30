@@ -8,8 +8,9 @@ export const CategoryCirclesBar: React.FC = () => {
   const categories = [
     {
       id: 'cat-creams',
-      name: 'Dail Beauty Cream',
+      name: 'Beauty Cream',
       slug: 'cream',
+      productId: 'dail-beauty-cream',
       image: '/images/cat_tile_beauty_cream.jpg',
       tag: 'PKR 350',
     },
@@ -17,6 +18,7 @@ export const CategoryCirclesBar: React.FC = () => {
       id: 'cat-hair',
       name: 'Herbal Hair Oil',
       slug: 'hair-care',
+      productId: 'dail-premium-herbal-hair-oil',
       image: '/images/cat_tile_hair_oil.jpg',
       tag: 'PKR 999',
     },
@@ -24,35 +26,24 @@ export const CategoryCirclesBar: React.FC = () => {
       id: 'cat-handfoot',
       name: 'Hand & Foot Care',
       slug: 'cream',
+      productId: 'dail-hand-and-foot-whitening-cream',
       image: '/images/cat_tile_hand_foot.jpg',
       tag: 'PKR 350',
-    },
-    {
-      id: 'cat-duo',
-      name: 'Glow & Hair Duo',
-      slug: 'bundles',
-      image: '/images/cat_tile_duo.jpg',
-      tag: 'PKR 1,199',
     },
     {
       id: 'cat-trio',
       name: '3-in-1 Regimen Box',
       slug: 'bundles',
+      productId: 'dail-complete-regimen-bundle',
       image: '/images/cat_tile_trio.jpg',
       tag: 'PKR 1,499',
     },
-    {
-      id: 'cat-family',
-      name: 'Family Double Pack',
-      slug: 'bundles',
-      image: '/images/dail_hero_banner_golden.jpg',
-      tag: 'Free Delivery',
-    },
   ];
 
-  const handleSelect = (slug: ProductCategory) => {
-    setSelectedCategory(slug);
+  const handleSelect = (cat: typeof categories[0]) => {
+    setSelectedCategory(cat.slug as ProductCategory);
     setCurrentPage('shop');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -75,7 +66,7 @@ export const CategoryCirclesBar: React.FC = () => {
           {categories.map((cat) => (
             <div
               key={cat.id}
-              onClick={() => handleSelect(cat.slug)}
+              onClick={() => handleSelect(cat)}
               className="flex flex-col items-center gap-2.5 cursor-pointer group shrink-0"
             >
               {/* Large Prominent Circle Avatar with Ring */}

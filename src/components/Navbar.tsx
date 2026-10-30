@@ -16,7 +16,9 @@ export const Navbar: React.FC = () => {
     storeSettings,
     getWhatsAppUrl,
     customPages,
-    navigateToCustomPage
+    navigateToCustomPage,
+    setSelectedProduct,
+    products
   } = useStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,6 +37,19 @@ export const Navbar: React.FC = () => {
     setMobileMenuOpen(false);
     setSkincareDropdownOpen(false);
     setHaircareDropdownOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToProduct = (productId: string) => {
+    const prod = products.find((p) => p.id === productId);
+    if (prod) {
+      setSelectedProduct(prod);
+      setCurrentPage('product-detail');
+      setMobileMenuOpen(false);
+      setSkincareDropdownOpen(false);
+      setHaircareDropdownOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -153,15 +168,15 @@ export const Navbar: React.FC = () => {
                     SKINCARE COLLECTIONS
                   </div>
                   <button
-                    onClick={() => navigateTo('shop', 'cream')}
-                    className="w-full text-left px-3 py-2 text-xs font-semibold text-stone-700 hover:text-[#d0473e] hover:bg-stone-50 rounded-xs flex items-center justify-between"
+                    onClick={() => navigateToProduct('dail-beauty-cream')}
+                    className="w-full text-left px-3 py-2 text-xs font-semibold text-stone-700 hover:text-[#d0473e] hover:bg-stone-50 rounded-xs flex items-center justify-between cursor-pointer"
                   >
                     <span>Dail Beauty Cream (50g)</span>
                     <span className="text-[10px] text-[#d0473e] font-bold">PKR 350</span>
                   </button>
                   <button
-                    onClick={() => navigateTo('shop', 'cream')}
-                    className="w-full text-left px-3 py-2 text-xs font-semibold text-stone-700 hover:text-[#d0473e] hover:bg-stone-50 rounded-xs flex items-center justify-between"
+                    onClick={() => navigateToProduct('dail-hand-and-foot-whitening-cream')}
+                    className="w-full text-left px-3 py-2 text-xs font-semibold text-stone-700 hover:text-[#d0473e] hover:bg-stone-50 rounded-xs flex items-center justify-between cursor-pointer"
                   >
                     <span>Hand & Foot Whitening Cream</span>
                     <span className="text-[10px] text-[#d0473e] font-bold">PKR 350</span>
@@ -190,8 +205,8 @@ export const Navbar: React.FC = () => {
                     HAIRCARE COLLECTION
                   </div>
                   <button
-                    onClick={() => navigateTo('shop', 'hair-care')}
-                    className="w-full text-left px-3 py-2 text-xs font-semibold text-stone-700 hover:text-[#d0473e] hover:bg-stone-50 rounded-xs flex items-center justify-between"
+                    onClick={() => navigateToProduct('dail-premium-herbal-hair-oil')}
+                    className="w-full text-left px-3 py-2 text-xs font-semibold text-stone-700 hover:text-[#d0473e] hover:bg-stone-50 rounded-xs flex items-center justify-between cursor-pointer"
                   >
                     <span>Premium Herbal Hair Oil (120ml)</span>
                     <span className="text-[10px] text-[#d0473e] font-bold">PKR 999</span>
@@ -355,14 +370,14 @@ export const Navbar: React.FC = () => {
                 {skincareDropdownOpen && (
                   <div className="pl-4 pb-2 space-y-1 text-xs font-semibold text-stone-600">
                     <button
-                      onClick={() => navigateTo('shop', 'cream')}
-                      className="w-full text-left py-2 px-3 hover:text-[#d0473e]"
+                      onClick={() => navigateToProduct('dail-beauty-cream')}
+                      className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer"
                     >
                       Dail Beauty Cream (5-Day Plan)
                     </button>
                     <button
-                      onClick={() => navigateTo('shop', 'cream')}
-                      className="w-full text-left py-2 px-3 hover:text-[#d0473e]"
+                      onClick={() => navigateToProduct('dail-hand-and-foot-whitening-cream')}
+                      className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer"
                     >
                       Hand & Foot Whitening Cream (PKR 350)
                     </button>
@@ -382,8 +397,8 @@ export const Navbar: React.FC = () => {
                 {haircareDropdownOpen && (
                   <div className="pl-4 pb-2 space-y-1 text-xs font-semibold text-stone-600">
                     <button
-                      onClick={() => navigateTo('shop', 'hair-care')}
-                      className="w-full text-left py-2 px-3 hover:text-[#d0473e]"
+                      onClick={() => navigateToProduct('dail-premium-herbal-hair-oil')}
+                      className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer"
                     >
                       Premium Herbal Hair Oil 120ml (PKR 999)
                     </button>
