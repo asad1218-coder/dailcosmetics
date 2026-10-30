@@ -54,6 +54,7 @@ export const AdminPortal: React.FC = () => {
     resetProductsToDefault,
     categories,
     addCategory,
+    updateCategory,
     deleteCategory,
     concerns,
     addConcern,
@@ -128,6 +129,14 @@ export const AdminPortal: React.FC = () => {
   const [newCatName, setNewCatName] = useState('');
   const [newCatSlug, setNewCatSlug] = useState('');
   const [newCatIcon, setNewCatIcon] = useState('✨');
+  const [newCatDescription, setNewCatDescription] = useState('');
+  const [newCatImage, setNewCatImage] = useState('');
+  const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null);
+  const [editCatName, setEditCatName] = useState('');
+  const [editCatSlug, setEditCatSlug] = useState('');
+  const [editCatIcon, setEditCatIcon] = useState('✨');
+  const [editCatDescription, setEditCatDescription] = useState('');
+  const [editCatImage, setEditCatImage] = useState('');
   const [newConcernInput, setNewConcernInput] = useState('');
 
   // Coupon State
@@ -229,11 +238,37 @@ export const AdminPortal: React.FC = () => {
       name: newCatName.trim(),
       slug,
       icon: newCatIcon.trim() || '🌿',
-      description: `${newCatName} collection by Dail Cosmetics`,
+      description: newCatDescription.trim() || `${newCatName} collection by Dail Cosmetics`,
+      image: newCatImage.trim() || undefined
     });
     setNewCatName('');
     setNewCatSlug('');
+    setNewCatDescription('');
+    setNewCatImage('');
     alert(`Category "${newCatName}" added successfully!`);
+  };
+
+  const handleStartEditCategory = (cat: CategoryItem) => {
+    setEditingCategory(cat);
+    setEditCatName(cat.name);
+    setEditCatSlug(cat.slug);
+    setEditCatIcon(cat.icon || '✨');
+    setEditCatDescription(cat.description || '');
+    setEditCatImage(cat.image || '');
+  };
+
+  const handleSaveCategoryUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCategory || !editCatName.trim()) return;
+    updateCategory(editingCategory.id || editingCategory.slug, {
+      name: editCatName.trim(),
+      slug: editCatSlug.trim() || editCatName.toLowerCase().replace(/\s+/g, '-'),
+      icon: editCatIcon.trim() || '🌿',
+      description: editCatDescription.trim(),
+      image: editCatImage.trim() || undefined
+    });
+    setEditingCategory(null);
+    alert('Category updated successfully!');
   };
 
   const handleAddConcern = (e: React.FormEvent) => {
@@ -1044,62 +1079,258 @@ export const AdminPortal: React.FC = () => {
               <form onSubmit={handleCreateCategory} className="p-4 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-3">
                 <span className="text-xs font-bold text-stone-800 block">Add New Category</span>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <input
-                    type="text"
-                    required
-                    value={newCatName}
-                    onChange={(e) => setNewCatName(e.target.value)}
-                    placeholder="e.g. Herbal Serums"
-                    className="sm:col-span-2 px-3 py-2 text-xs bg-white border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-stone-600">Category Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newCatName}
+                      onChange={(e) => {
+                        setNewCatName(e.target.value);
+                        if (!newCatSlug || newCatSlug === newCatName.toLowerCase().replace(/\s+/g, '-')) {
+                          setNewCatSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'));
+                        }
+                      }}
+                      placeholder="e.g. Herbal Face Washes"
+                      className="w-full px-3 py-2 text-xs bg-white border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-stone-600">URL Slug *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newCatSlug}
+                      onChange={(e) => setNewCatSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+                      placeholder="e.g. face-wash"
+                      className="w-full px-3 py-2 text-xs bg-white border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d] font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Icon Library Selector */}
+                <div className="space-y-1.5 pt-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold text-stone-600">Category Icon (Pick from library or type custom)</label>
+                    <span className="text-xs font-bold text-[#7b3e1d]">Selected: {newCatIcon}</span>
+                  </div>
+                  
+                  {/* Preset Icon Chips */}
+                  <div className="flex flex-wrap gap-1.5 p-2 bg-white rounded-xl border border-stone-200">
+                    {['🧴', '🌿', '🛍️', '🦶', '🎁', '✨', '🌸', '💧', '👑', '⭐', '🍃', '🍯', '🥥', '🧼', '💅', '🌹', '🌾', '🌺'].map((icon) => (
+                      <button
+                        key={icon}
+                        type="button"
+                        onClick={() => setNewCatIcon(icon)}
+                        className={`w-7 h-7 rounded-lg text-sm flex items-center justify-center transition-all cursor-pointer ${
+                          newCatIcon === icon ? 'bg-[#7b3e1d] text-white scale-110 shadow-xs' : 'hover:bg-stone-100 text-stone-700'
+                        }`}
+                      >
+                        {icon}
+                      </button>
+                    ))}
+                  </div>
+
                   <input
                     type="text"
                     value={newCatIcon}
                     onChange={(e) => setNewCatIcon(e.target.value)}
-                    placeholder="Icon (🌿)"
-                    className="px-3 py-2 text-xs bg-white border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d] text-center"
+                    placeholder="Or type custom emoji / text icon"
+                    className="w-full px-3 py-1.5 text-xs bg-white border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-stone-600">Short Description (Optional)</label>
+                  <input
+                    type="text"
+                    value={newCatDescription}
+                    onChange={(e) => setNewCatDescription(e.target.value)}
+                    placeholder="e.g. Pure botanical cleansers and daily washes"
+                    className="w-full px-3 py-1.5 text-xs bg-white border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2 bg-[#7b3e1d] hover:bg-[#622f14] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                  className="w-full py-2 bg-[#7b3e1d] hover:bg-[#622f14] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs"
                 >
-                  Create Category
+                  + Add New Category
                 </button>
               </form>
 
               {/* Current Categories List */}
               <div className="space-y-2">
+                <span className="text-xs font-bold text-stone-800 block">Existing Categories ({categories.length})</span>
                 {categories.map((cat) => (
-                  <div key={cat.slug} className="flex items-center justify-between p-3 rounded-xl bg-white border border-stone-200/80">
+                  <div key={cat.id || cat.slug} className="flex items-center justify-between p-3 rounded-xl bg-white border border-stone-200/80 hover:border-stone-300 transition-colors">
                     <div className="flex items-center gap-2.5">
-                      <span className="text-lg">{cat.icon}</span>
+                      <span className="text-xl w-8 h-8 rounded-lg bg-stone-50 border border-stone-200 flex items-center justify-center shrink-0">
+                        {cat.icon || '🛍️'}
+                      </span>
                       <div>
-                        <span className="font-bold text-xs text-stone-900 block">{cat.name}</span>
-                        <span className="text-[10px] text-stone-400">slug: {cat.slug}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-xs text-stone-900 block">{cat.name}</span>
+                          {cat.slug === 'all' && (
+                            <span className="px-1.5 py-0.2 rounded-xs text-[9px] font-bold bg-stone-100 text-stone-600 uppercase">Default</span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-stone-400 font-mono">slug: {cat.slug}</span>
+                        {cat.description && (
+                          <span className="text-[10px] text-stone-500 block truncate max-w-xs">{cat.description}</span>
+                        )}
                       </div>
                     </div>
 
-                    {cat.slug !== 'all' ? (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {/* Edit Button */}
                       <button
-                        onClick={() => {
-                          if (window.confirm(`Delete category "${cat.name}"?`)) {
-                            deleteCategory(cat.slug);
-                          }
-                        }}
-                        className="p-1.5 rounded-lg text-stone-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                        title="Delete category"
+                        onClick={() => handleStartEditCategory(cat)}
+                        className="p-1.5 rounded-lg text-stone-500 hover:text-[#7b3e1d] hover:bg-stone-100 transition-colors cursor-pointer"
+                        title="Edit category"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Edit className="w-3.5 h-3.5" />
                       </button>
-                    ) : (
-                      <span className="text-[10px] text-stone-400 font-semibold">Default</span>
-                    )}
+
+                      {/* Delete Button */}
+                      {cat.slug !== 'all' ? (
+                        <button
+                          onClick={() => {
+                            if (window.confirm(`Delete category "${cat.name}"? This will remove it from the store.`)) {
+                              deleteCategory(cat.id || cat.slug);
+                            }
+                          }}
+                          className="p-1.5 rounded-lg text-stone-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                          title="Delete category"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
                 ))}
               </div>
+
+              {/* Edit Category Modal */}
+              {editingCategory && (
+                <div 
+                  className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+                  onClick={() => setEditingCategory(null)}
+                >
+                  <div 
+                    className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl border border-stone-200 space-y-4 text-left"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                      <div>
+                        <h4 className="font-heading text-sm font-bold uppercase text-stone-900">
+                          Edit Category: {editingCategory.name}
+                        </h4>
+                        <span className="text-[10px] text-stone-500 font-mono">ID: {editingCategory.id || editingCategory.slug}</span>
+                      </div>
+                      <button
+                        onClick={() => setEditingCategory(null)}
+                        className="p-1 text-stone-400 hover:text-stone-700 rounded-full cursor-pointer"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleSaveCategoryUpdate} className="space-y-3 text-xs">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-stone-700">Category Name *</label>
+                        <input
+                          type="text"
+                          required
+                          value={editCatName}
+                          onChange={(e) => setEditCatName(e.target.value)}
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d] font-semibold"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-stone-700">URL Slug *</label>
+                        <input
+                          type="text"
+                          required
+                          value={editCatSlug}
+                          onChange={(e) => setEditCatSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d] font-mono"
+                        />
+                      </div>
+
+                      {/* Icon library selector in Edit Modal */}
+                      <div className="space-y-1.5 pt-1">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold text-stone-700">Category Icon</label>
+                          <span className="text-xs font-bold text-[#7b3e1d]">Selected: {editCatIcon}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 p-2 bg-stone-50 rounded-xl border border-stone-200">
+                          {['🧴', '🌿', '🛍️', '🦶', '🎁', '✨', '🌸', '💧', '👑', '⭐', '🍃', '🍯', '🥥', '🧼', '💅', '🌹', '🌾', '🌺'].map((icon) => (
+                            <button
+                              key={icon}
+                              type="button"
+                              onClick={() => setEditCatIcon(icon)}
+                              className={`w-7 h-7 rounded-lg text-sm flex items-center justify-center transition-all cursor-pointer ${
+                                editCatIcon === icon ? 'bg-[#7b3e1d] text-white scale-110 shadow-xs' : 'hover:bg-white text-stone-700'
+                              }`}
+                            >
+                              {icon}
+                            </button>
+                          ))}
+                        </div>
+                        <input
+                          type="text"
+                          value={editCatIcon}
+                          onChange={(e) => setEditCatIcon(e.target.value)}
+                          placeholder="Custom emoji or icon"
+                          className="w-full px-3 py-1.5 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-stone-700">Description</label>
+                        <input
+                          type="text"
+                          value={editCatDescription}
+                          onChange={(e) => setEditCatDescription(e.target.value)}
+                          placeholder="e.g. 100% natural essential oils & mixed herbs"
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-stone-700">Category Tile Image URL (Optional)</label>
+                        <input
+                          type="text"
+                          value={editCatImage}
+                          onChange={(e) => setEditCatImage(e.target.value)}
+                          placeholder="/images/cat_tile_hair_oil.jpg"
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d] font-mono text-[11px]"
+                        />
+                      </div>
+
+                      <div className="pt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditingCategory(null)}
+                          className="flex-1 py-2.5 rounded-xl border border-stone-200 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="flex-1 py-2.5 rounded-xl bg-[#7b3e1d] hover:bg-[#622f14] text-white font-bold cursor-pointer shadow-xs"
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right: Concerns & Filter Tags */}
@@ -1704,8 +1935,8 @@ export const AdminPortal: React.FC = () => {
                   />
                 </div>
 
-                {/* Social Channels (Facebook, Instagram, TikTok) */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Social Channels (Facebook, Instagram, TikTok 1, TikTok 2) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-stone-800">Facebook Page URL</label>
                     <input
@@ -1729,11 +1960,22 @@ export const AdminPortal: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-stone-800">TikTok Profile URL</label>
+                    <label className="text-xs font-bold text-stone-800">TikTok Account 1 URL</label>
                     <input
                       type="text"
-                      value={settingsForm.tiktokUrl || ''}
-                      onChange={(e) => setSettingsForm({ ...settingsForm, tiktokUrl: e.target.value })}
+                      value={settingsForm.tiktokUrl1 || settingsForm.tiktokUrl || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, tiktokUrl1: e.target.value, tiktokUrl: e.target.value })}
+                      placeholder="https://tiktok.com/@..."
+                      className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-stone-800">TikTok Account 2 URL</label>
+                    <input
+                      type="text"
+                      value={settingsForm.tiktokUrl2 || ''}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, tiktokUrl2: e.target.value })}
                       placeholder="https://tiktok.com/@..."
                       className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden font-mono"
                     />

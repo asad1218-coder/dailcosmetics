@@ -148,10 +148,10 @@ export const INITIAL_COUPONS: Coupon[] = [
 
 export const INITIAL_CATEGORIES: CategoryItem[] = [
   { id: 'cat-all', name: 'All Products', slug: 'all', icon: '🛍️', description: 'Complete organic hair and skincare range' },
-  { id: 'cat-creams', name: 'Dail Beauty Cream', slug: 'cream', icon: '🧴', description: 'Steroid-free anti-aging & daily radiance cream (PKR 350)' },
-  { id: 'cat-hair', name: 'Herbal Hair Oil', slug: 'hair-care', icon: '🌿', description: '100% natural essential oils & mixed herbs (PKR 999)' },
-  { id: 'cat-handfoot', name: 'Hand & Foot Care', slug: 'cream', icon: '🦶', description: '3-Action repair for knuckles and heels (PKR 350)' },
-  { id: 'cat-bundles', name: 'Value Bundles & Deals', slug: 'bundles', icon: '🎁', description: 'Exclusive value duo & trio kits with nationwide delivery' },
+  { id: 'cat-creams', name: 'Dail Beauty Cream', slug: 'cream', icon: '🧴', description: 'Steroid-free anti-aging & daily radiance cream (PKR 350)', image: '/images/cat_tile_beauty_cream.jpg' },
+  { id: 'cat-hair', name: 'Herbal Hair Oil', slug: 'hair-care', icon: '🌿', description: '100% natural essential oils & mixed herbs (PKR 999)', image: '/images/cat_tile_hair_oil.jpg' },
+  { id: 'cat-handfoot', name: 'Hand & Foot Care', slug: 'cream', icon: '🦶', description: '3-Action repair for knuckles and heels (PKR 350)', image: '/images/cat_tile_hand_foot.jpg' },
+  { id: 'cat-bundles', name: 'Value Bundles & Deals', slug: 'bundles', icon: '🎁', description: 'Exclusive value duo & trio kits with nationwide delivery', image: '/images/cat_tile_trio.jpg' },
 ];
 
 export const INITIAL_CONCERNS: string[] = [
@@ -171,6 +171,8 @@ export const INITIAL_SETTINGS: StoreSettings = {
   email: 'dailcosmeticscht@gmail.com',
   facebookUrl: 'https://www.facebook.com/profile.php?id=61563795102913&mibextid=ZbWKwL',
   tiktokUrl: 'https://www.tiktok.com/@dailcosmetics?_t=8olPFWJTJLT&_r=1',
+  tiktokUrl1: 'https://www.tiktok.com/@dailcosmetics?_t=8olPFWJTJLT&_r=1',
+  tiktokUrl2: 'https://www.tiktok.com/@dailcosmetics',
   instagramUrl: 'https://www.instagram.com/dailcosmetics?igsh=ZzYyd29rZ3p3d3c=',
   adminPassword: 'dail@2026',
   announcementText: 'FREE SHIPPING ON ALL ORDERS PKR 2000 AND ABOVE | CASH ON DELIVERY AVAILABLE NATIONWIDE | WHATSAPP: 0313 6361218',
@@ -326,7 +328,8 @@ interface StoreState {
   // Categories & Concerns Management
   categories: CategoryItem[];
   addCategory: (cat: Omit<CategoryItem, 'id'>) => void;
-  deleteCategory: (slug: string) => void;
+  updateCategory: (idOrSlug: string, updates: Partial<CategoryItem>) => void;
+  deleteCategory: (idOrSlug: string) => void;
   concerns: string[];
   addConcern: (concern: string) => void;
   deleteConcern: (concern: string) => void;
@@ -561,9 +564,16 @@ export const useStore = create<StoreState>()(
       // Store Settings
       storeSettings: INITIAL_SETTINGS,
       updateStoreSettings: (updates) => {
-        set((state) => ({
-          storeSettings: { ...state.storeSettings, ...updates }
-        }));
+        set((state) => {
+          const newSettings = {
+            ...state.storeSettings,
+            ...updates,
+            tiktokUrl: updates.tiktokUrl1 || updates.tiktokUrl || state.storeSettings.tiktokUrl,
+            tiktokUrl1: updates.tiktokUrl1 !== undefined ? updates.tiktokUrl1 : (state.storeSettings.tiktokUrl1 || state.storeSettings.tiktokUrl),
+            tiktokUrl2: updates.tiktokUrl2 !== undefined ? updates.tiktokUrl2 : (state.storeSettings.tiktokUrl2 || '')
+          };
+          return { storeSettings: newSettings };
+        });
       },
       getWhatsAppCleanNumber: () => {
         const raw = get().storeSettings.whatsappNumber || '03346361218';
@@ -610,11 +620,16 @@ export const useStore = create<StoreState>()(
       },
 
       deleteProduct: (id) => {
-        set((state) => ({
-          products: state.products.filter((p) => p.id !== id),
-          cart: state.cart.filter((item) => item.product.id !== id),
-          wishlist: state.wishlist.filter((wId) => wId !== id)
-        }));
+        set((state) => {
+          const remainingProducts = state.products.filter((p) => p.id !== id);
+          return {
+            products: remainingProducts,
+            cart: state.cart.filter((item) => item.product.id !== id),
+            wishlist: state.wishlist.filter((wId) => wId !== id),
+            selectedProduct: state.selectedProduct?.id === id ? remainingProducts[0] || null : state.selectedProduct,
+            quickViewProduct: state.quickViewProduct?.id === id ? null : state.quickViewProduct
+          };
+        });
       },
 
       toggleProductStock: (id) => {
@@ -635,18 +650,31 @@ export const useStore = create<StoreState>()(
       // Categories & Concerns
       categories: INITIAL_CATEGORIES,
       addCategory: (cat) => {
+        const slug = cat.slug || cat.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
         const newCat: CategoryItem = {
           ...cat,
+          slug,
           id: `cat-${Date.now()}`
         };
         set((state) => ({ categories: [...state.categories, newCat] }));
       },
-      deleteCategory: (slug) => {
-        if (slug === 'all') return;
+      updateCategory: (idOrSlug, updates) => {
         set((state) => ({
-          categories: state.categories.filter((c) => c.slug !== slug),
-          selectedCategory: state.selectedCategory === slug ? 'all' : state.selectedCategory
+          categories: state.categories.map((c) =>
+            c.id === idOrSlug || c.slug === idOrSlug ? { ...c, ...updates } : c
+          )
         }));
+      },
+      deleteCategory: (idOrSlug) => {
+        if (idOrSlug === 'all' || idOrSlug === 'cat-all') return;
+        set((state) => {
+          const target = state.categories.find((c) => c.id === idOrSlug || c.slug === idOrSlug);
+          const targetSlug = target ? target.slug : idOrSlug;
+          return {
+            categories: state.categories.filter((c) => c.id !== idOrSlug && c.slug !== idOrSlug),
+            selectedCategory: state.selectedCategory === targetSlug ? 'all' : state.selectedCategory
+          };
+        });
       },
 
       concerns: INITIAL_CONCERNS,

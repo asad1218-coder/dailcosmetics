@@ -6,6 +6,7 @@ export interface CategoryItem {
   slug: string;
   icon?: string;
   description?: string;
+  image?: string;
 }
 
 export interface Coupon {
@@ -22,6 +23,8 @@ export interface StoreSettings {
   email: string; // "dailcosmeticscht@gmail.com"
   facebookUrl?: string;
   tiktokUrl?: string;
+  tiktokUrl1?: string;
+  tiktokUrl2?: string;
   instagramUrl?: string;
   adminPassword?: string; // "dail@2026"
   announcementText: string;

@@ -89,31 +89,47 @@ export const ContactPage: React.FC = () => {
                 <strong className="text-xs font-heading font-extrabold text-stone-900 uppercase tracking-wider block">
                   Official Social Channels:
                 </strong>
-                <div className="flex flex-col gap-2 text-xs">
-                  <a 
-                    href="https://www.facebook.com/profile.php?id=61563795102913&mibextid=ZbWKwL"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline font-bold flex items-center gap-2"
-                  >
-                    <span>📘 Facebook Official Page</span>
-                  </a>
-                  <a 
-                    href="https://www.instagram.com/dailcosmetics?igsh=ZzYyd29rZ3p3d3c="
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-pink-600 hover:underline font-bold flex items-center gap-2"
-                  >
-                    <span>📸 Instagram @dailcosmetics</span>
-                  </a>
-                  <a 
-                    href="https://www.tiktok.com/@dailcosmetics?_t=8olPFWJTJLT&_r=1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-stone-900 hover:underline font-bold flex items-center gap-2"
-                  >
-                    <span>🎵 TikTok @dailcosmetics</span>
-                  </a>
+                <div className="flex flex-col gap-2.5 text-xs">
+                  {storeSettings.facebookUrl && (
+                    <a 
+                      href={storeSettings.facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline font-bold flex items-center gap-2"
+                    >
+                      <span>📘 Facebook Official Page</span>
+                    </a>
+                  )}
+                  {storeSettings.instagramUrl && (
+                    <a 
+                      href={storeSettings.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-pink-600 hover:underline font-bold flex items-center gap-2"
+                    >
+                      <span>📸 Instagram @dailcosmetics</span>
+                    </a>
+                  )}
+                  {(storeSettings.tiktokUrl1 || storeSettings.tiktokUrl) && (
+                    <a 
+                      href={storeSettings.tiktokUrl1 || storeSettings.tiktokUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-stone-900 hover:underline font-bold flex items-center gap-2"
+                    >
+                      <span>🎵 TikTok Account 1</span>
+                    </a>
+                  )}
+                  {storeSettings.tiktokUrl2 && (
+                    <a 
+                      href={storeSettings.tiktokUrl2}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-stone-900 hover:underline font-bold flex items-center gap-2"
+                    >
+                      <span>🎵 TikTok Account 2</span>
+                    </a>
+                  )}
                 </div>
               </div>
 

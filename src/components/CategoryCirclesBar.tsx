@@ -3,47 +3,15 @@ import { useStore } from '../store/useStore';
 import type { ProductCategory } from '../types';
 
 export const CategoryCirclesBar: React.FC = () => {
-  const { setSelectedCategory, setCurrentPage } = useStore();
+  const { categories, products, setSelectedCategory, setCurrentPage } = useStore();
 
-  const categories = [
-    {
-      id: 'cat-creams',
-      name: 'Beauty Cream',
-      slug: 'cream',
-      productId: 'dail-beauty-cream',
-      image: '/images/cat_tile_beauty_cream.jpg',
-      tag: 'PKR 350',
-    },
-    {
-      id: 'cat-hair',
-      name: 'Herbal Hair Oil',
-      slug: 'hair-care',
-      productId: 'dail-premium-herbal-hair-oil',
-      image: '/images/cat_tile_hair_oil.jpg',
-      tag: 'PKR 999',
-    },
-    {
-      id: 'cat-handfoot',
-      name: 'Hand & Foot Care',
-      slug: 'cream',
-      productId: 'dail-hand-and-foot-whitening-cream',
-      image: '/images/cat_tile_hand_foot.jpg',
-      tag: 'PKR 350',
-    },
-    {
-      id: 'cat-trio',
-      name: '3-in-1 Regimen Box',
-      slug: 'bundles',
-      productId: 'dail-complete-regimen-bundle',
-      image: '/images/cat_tile_trio.jpg',
-      tag: 'PKR 1,499',
-    },
-  ];
+  // Exclude 'all' from the circles row
+  const displayCategories = categories.filter((c) => c.slug !== 'all');
 
-  const handleSelect = (cat: typeof categories[0]) => {
-    setSelectedCategory(cat.slug as ProductCategory);
+  const handleSelect = (slug: string) => {
+    setSelectedCategory(slug as ProductCategory);
     setCurrentPage('shop');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   return (
@@ -63,35 +31,47 @@ export const CategoryCirclesBar: React.FC = () => {
 
         {/* Categories Horizontal Scroll / Grid with large prominent circles */}
         <div className="flex items-start justify-start sm:justify-center gap-4 sm:gap-7 overflow-x-auto pb-4 pt-1 no-scrollbar scroll-smooth">
-          {categories.map((cat) => (
-            <div
-              key={cat.id}
-              onClick={() => handleSelect(cat)}
-              className="flex flex-col items-center gap-2.5 cursor-pointer group shrink-0"
-            >
-              {/* Large Prominent Circle Avatar with Ring */}
-              <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-white border-2 border-stone-200 group-hover:border-[#d0473e] transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-106 overflow-hidden flex items-center justify-center">
-                <img 
-                  src={cat.image} 
-                  alt={cat.name} 
-                  className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-500"
-                />
-                {/* Floating Price Tag */}
-                {cat.tag && (
-                  <span className="absolute bottom-1 inset-x-2 bg-[#d0473e] text-white text-[8px] sm:text-[9.5px] font-heading font-extrabold uppercase tracking-wider text-center py-0.5 rounded-full shadow-xs">
-                    {cat.tag}
-                  </span>
-                )}
-              </div>
+          {displayCategories.map((cat) => {
+            const matchedProduct = products.find((p) => p.category === cat.slug);
+            const imageSrc = cat.image || matchedProduct?.image || '/images/dail_beauty_cream_square.jpg';
+            const priceTag = matchedProduct ? `PKR ${matchedProduct.price.toLocaleString()}` : null;
 
-              {/* Category Label */}
-              <div className="text-center">
-                <span className="font-heading text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-800 group-hover:text-[#d0473e] block max-w-[100px] sm:max-w-[120px] leading-tight transition-colors">
-                  {cat.name}
-                </span>
+            return (
+              <div
+                key={cat.id || cat.slug}
+                onClick={() => handleSelect(cat.slug)}
+                className="flex flex-col items-center gap-2.5 cursor-pointer group shrink-0"
+              >
+                {/* Large Prominent Circle Avatar with Ring */}
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-white border-2 border-stone-200 group-hover:border-[#d0473e] transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-106 overflow-hidden flex items-center justify-center">
+                  <img 
+                    src={imageSrc} 
+                    alt={cat.name} 
+                    className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-500"
+                  />
+                  {/* Floating Price Tag */}
+                  {priceTag && (
+                    <span className="absolute bottom-1 inset-x-2 bg-[#d0473e] text-white text-[8px] sm:text-[9.5px] font-heading font-extrabold uppercase tracking-wider text-center py-0.5 rounded-full shadow-xs">
+                      {priceTag}
+                    </span>
+                  )}
+                  {/* Category Icon Badge */}
+                  {cat.icon && (
+                    <span className="absolute top-1 right-2 text-xs sm:text-sm drop-shadow-xs pointer-events-none">
+                      {cat.icon}
+                    </span>
+                  )}
+                </div>
+
+                {/* Category Label */}
+                <div className="text-center">
+                  <span className="font-heading text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-800 group-hover:text-[#d0473e] block max-w-[100px] sm:max-w-[120px] leading-tight transition-colors">
+                    {cat.name}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
       </div>

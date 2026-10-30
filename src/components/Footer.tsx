@@ -215,30 +215,46 @@ export const Footer: React.FC = () => {
                 Official Channels:
               </span>
               <div className="flex flex-col gap-1.5">
-                <a
-                  href="https://www.facebook.com/profile.php?id=61563795102913&mibextid=ZbWKwL"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-blue-400 transition-colors flex items-center gap-2 text-stone-300"
-                >
-                  <span>📘 Facebook Page</span>
-                </a>
-                <a
-                  href="https://www.instagram.com/dailcosmetics?igsh=ZzYyd29rZ3p3d3c="
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-pink-400 transition-colors flex items-center gap-2 text-stone-300"
-                >
-                  <span>📸 Instagram @dailcosmetics</span>
-                </a>
-                <a
-                  href="https://www.tiktok.com/@dailcosmetics?_t=8olPFWJTJLT&_r=1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors flex items-center gap-2 text-stone-300"
-                >
-                  <span>🎵 TikTok @dailcosmetics</span>
-                </a>
+                {storeSettings.facebookUrl && (
+                  <a
+                    href={storeSettings.facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-400 transition-colors flex items-center gap-2 text-stone-300"
+                  >
+                    <span>📘 Facebook Page</span>
+                  </a>
+                )}
+                {storeSettings.instagramUrl && (
+                  <a
+                    href={storeSettings.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-pink-400 transition-colors flex items-center gap-2 text-stone-300"
+                  >
+                    <span>📸 Instagram @dailcosmetics</span>
+                  </a>
+                )}
+                {(storeSettings.tiktokUrl1 || storeSettings.tiktokUrl) && (
+                  <a
+                    href={storeSettings.tiktokUrl1 || storeSettings.tiktokUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors flex items-center gap-2 text-stone-300"
+                  >
+                    <span>🎵 TikTok Account 1</span>
+                  </a>
+                )}
+                {storeSettings.tiktokUrl2 && (
+                  <a
+                    href={storeSettings.tiktokUrl2}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors flex items-center gap-2 text-stone-300"
+                  >
+                    <span>🎵 TikTok Account 2</span>
+                  </a>
+                )}
               </div>
             </div>
 
