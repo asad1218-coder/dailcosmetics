@@ -42,7 +42,7 @@ export const ProductDetailPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string>(product.image);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<'standard' | 'jumbo'>('standard');
-  const [openAccordion, setOpenAccordion] = useState<'benefits' | 'ingredients' | 'howToUse' | 'safety' | null>('benefits');
+  const [openAccordion, setOpenAccordion] = useState<'description' | 'benefits' | 'ingredients' | 'howToUse' | 'safety' | null>('description');
   const [addedToast, setAddedToast] = useState(false);
   const [calcCity, setCalcCity] = useState('Lahore');
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -164,19 +164,18 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Display Stage Container */}
-            <div className="relative aspect-4/5 sm:aspect-square lg:aspect-4/5 w-full rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#fdfbf7] via-[#f7f2ea] to-[#eee4d6] border border-stone-200/90 shadow-sm overflow-hidden flex flex-col items-center justify-center p-4 sm:p-8 group">
+            <div className="relative aspect-square w-full rounded-2xl sm:rounded-3xl bg-white sm:bg-gradient-to-b sm:from-[#fdfbf7] sm:via-[#f7f2ea] sm:to-[#eee4d6] border border-stone-200 shadow-sm overflow-hidden flex flex-col items-center justify-center p-2 sm:p-6 group">
               
               {/* Radial Spotlight Glow */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.95)_0%,rgba(247,242,234,0.4)_65%,transparent_100%)] pointer-events-none" />
 
               {activeViewMode === 'gallery' ? (
-                <div className="relative z-10 w-full h-[85%] flex flex-col items-center justify-center">
+                <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-2">
                   <img
                     src={selectedImage}
                     alt={product.name}
-                    className="max-h-full max-w-[90%] object-contain drop-shadow-[0_20px_28px_rgba(123,62,29,0.22)] group-hover:scale-104 transition-transform duration-500"
+                    className="w-full h-full object-contain max-h-[350px] sm:max-h-[460px] drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] group-hover:scale-104 transition-transform duration-500"
                   />
-                  <div className="w-3/4 h-3 rounded-[50%] bg-[#7b3e1d]/14 blur-[6px] -mt-2 pointer-events-none" />
                 </div>
               ) : (
                 <div className="relative z-10 w-full h-full bg-gradient-to-b from-[#fbf9f5] to-[#ece5d8] rounded-2xl overflow-hidden">
@@ -218,15 +217,26 @@ export const ProductDetailPage: React.FC = () => {
           {/* Right Column: Buying Box & Specifications */}
           <div className="lg:col-span-6 space-y-6">
             
-            <div className="space-y-1.5">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#c59b27]">
+            <div className="space-y-2">
+              <span className="text-[11px] font-heading font-extrabold uppercase tracking-[0.2em] text-[#d0473e] block">
                 Official Dail Packaging • {product.volume}
               </span>
-              <h1 className="font-serif-luxury text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900 leading-tight">
+              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-stone-900 leading-tight uppercase">
                 {product.name}
               </h1>
               {product.urduName && (
-                <p className="text-[#c59b27] font-serif text-lg italic">{product.urduName}</p>
+                <p className="text-[#c59b27] font-serif text-base sm:text-lg italic">{product.urduName}</p>
+              )}
+              {/* Product Tagline & Full Description */}
+              {product.tagline && (
+                <p className="text-stone-700 text-xs sm:text-sm font-semibold leading-relaxed border-l-2 border-[#d0473e] pl-3 py-0.5 bg-stone-50 rounded-r-xs">
+                  {product.tagline}
+                </p>
+              )}
+              {product.description && (
+                <p className="text-stone-600 text-xs sm:text-sm leading-relaxed font-normal pt-1">
+                  {product.description}
+                </p>
               )}
             </div>
 
@@ -395,13 +405,36 @@ export const ProductDetailPage: React.FC = () => {
             {/* Accordion Specs */}
             <div className="pt-4 border-t border-stone-200 space-y-2.5">
               
+              {/* 1. Full Product Description Accordion */}
+              <div className="rounded-xl border border-stone-200 bg-white overflow-hidden shadow-2xs">
+                <button
+                  onClick={() => setOpenAccordion(openAccordion === 'description' ? null : 'description')}
+                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50 cursor-pointer"
+                >
+                  <span className="font-heading uppercase tracking-wider">Product Overview & Details</span>
+                  {openAccordion === 'description' ? <ChevronUp className="w-4 h-4 text-[#d0473e]" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                {openAccordion === 'description' && (
+                  <div className="p-4 pt-2 text-xs text-stone-600 space-y-3 border-t border-stone-100 leading-relaxed">
+                    <p>{product.description}</p>
+                    {product.fullIngredients && (
+                      <div className="p-2.5 bg-stone-50 rounded-xs border border-stone-200 text-[11px]">
+                        <strong className="text-stone-800 block mb-1">Full Ingredients:</strong>
+                        <span className="text-stone-600">{product.fullIngredients}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 2. Clinical Benefits Accordion */}
               <div className="rounded-xl border border-stone-200 bg-white overflow-hidden">
                 <button
                   onClick={() => setOpenAccordion(openAccordion === 'benefits' ? null : 'benefits')}
-                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50"
+                  className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-stone-900 hover:bg-stone-50 cursor-pointer"
                 >
-                  <span>Clinical Benefits & Results</span>
-                  {openAccordion === 'benefits' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  <span className="font-heading uppercase tracking-wider">Clinical Benefits & Results</span>
+                  {openAccordion === 'benefits' ? <ChevronUp className="w-4 h-4 text-[#d0473e]" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 {openAccordion === 'benefits' && (
                   <div className="p-4 pt-0 text-xs text-stone-600 space-y-2 border-t border-stone-100">
@@ -527,20 +560,20 @@ export const ProductDetailPage: React.FC = () => {
         <div className="pt-12 border-t border-stone-200 space-y-6">
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#c59b27]">Complementary Regimen</span>
-              <h3 className="font-serif-luxury text-2xl sm:text-3xl font-bold text-stone-900 mt-0.5">
-                Complete Your Daily Ritual
+              <span className="text-[11px] font-heading font-extrabold uppercase tracking-widest text-[#d0473e]">RECOMMENDED FOR YOU</span>
+              <h3 className="font-heading text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-stone-900 mt-1">
+                More Formulations & Products
               </h3>
             </div>
             <button
               onClick={() => setCurrentPage('shop')}
-              className="text-xs font-bold text-[#7b3e1d] hover:underline"
+              className="text-xs font-heading font-bold text-[#d0473e] hover:underline uppercase tracking-wider cursor-pointer"
             >
-              View All Formulations →
+              View All Products →
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {relatedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
