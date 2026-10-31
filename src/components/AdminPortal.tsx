@@ -141,13 +141,13 @@ export const AdminPortal: React.FC = () => {
   // Category & Concern Modals
   const [newCatName, setNewCatName] = useState('');
   const [newCatSlug, setNewCatSlug] = useState('');
-  const [newCatIcon, setNewCatIcon] = useState('✨');
+  const [newCatIcon, setNewCatIcon] = useState('');
   const [newCatDescription, setNewCatDescription] = useState('');
   const [newCatImage, setNewCatImage] = useState('');
   const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null);
   const [editCatName, setEditCatName] = useState('');
   const [editCatSlug, setEditCatSlug] = useState('');
-  const [editCatIcon, setEditCatIcon] = useState('✨');
+  const [editCatIcon, setEditCatIcon] = useState('');
   const [editCatDescription, setEditCatDescription] = useState('');
   const [editCatImage, setEditCatImage] = useState('');
   const [newConcernInput, setNewConcernInput] = useState('');
@@ -250,12 +250,13 @@ export const AdminPortal: React.FC = () => {
     addCategory({
       name: newCatName.trim(),
       slug,
-      icon: newCatIcon.trim() || '🌿',
+      icon: newCatIcon.trim() || undefined,
       description: newCatDescription.trim() || `${newCatName} collection by Dail Cosmetics`,
       image: newCatImage.trim() || undefined
     });
     setNewCatName('');
     setNewCatSlug('');
+    setNewCatIcon('');
     setNewCatDescription('');
     setNewCatImage('');
     alert(`Category "${newCatName}" added successfully!`);
@@ -265,7 +266,7 @@ export const AdminPortal: React.FC = () => {
     setEditingCategory(cat);
     setEditCatName(cat.name);
     setEditCatSlug(cat.slug);
-    setEditCatIcon(cat.icon || '✨');
+    setEditCatIcon(cat.icon || '');
     setEditCatDescription(cat.description || '');
     setEditCatImage(cat.image || '');
   };
@@ -276,7 +277,7 @@ export const AdminPortal: React.FC = () => {
     updateCategory(editingCategory.id || editingCategory.slug, {
       name: editCatName.trim(),
       slug: editCatSlug.trim() || editCatName.toLowerCase().replace(/\s+/g, '-'),
-      icon: editCatIcon.trim() || '🌿',
+      icon: editCatIcon.trim() || undefined,
       description: editCatDescription.trim(),
       image: editCatImage.trim() || undefined
     });
@@ -1189,23 +1190,47 @@ export const AdminPortal: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Icon Library Selector */}
+                {/* Icon Library Selector (Optional) */}
                 <div className="space-y-1.5 pt-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-bold text-stone-600">Category Icon (Pick from library or type custom)</label>
-                    <span className="text-xs font-bold text-[#7b3e1d]">Selected: {newCatIcon}</span>
+                    <label className="text-[10px] font-bold text-stone-600">Category Icon (Optional)</label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-[#7b3e1d]">
+                        {newCatIcon ? `Selected: ${newCatIcon}` : 'No icon (Optional)'}
+                      </span>
+                      {newCatIcon && (
+                        <button
+                          type="button"
+                          onClick={() => setNewCatIcon('')}
+                          className="px-2 py-0.5 text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded border border-red-200 transition-colors cursor-pointer"
+                        >
+                          ✕ Remove Icon
+                        </button>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Preset Icon Chips */}
-                  <div className="flex flex-wrap gap-1.5 p-2 bg-white rounded-xl border border-stone-200">
+                  <div className="flex flex-wrap gap-1.5 p-2 bg-white rounded-xl border border-stone-200 items-center">
+                    <button
+                      type="button"
+                      onClick={() => setNewCatIcon('')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                        !newCatIcon ? 'bg-stone-800 text-white shadow-xs' : 'bg-stone-100 hover:bg-stone-200 text-stone-600'
+                      }`}
+                      title="No Icon"
+                    >
+                      🚫 None
+                    </button>
                     {['🧴', '🌿', '🛍️', '🦶', '🎁', '✨', '🌸', '💧', '👑', '⭐', '🍃', '🍯', '🥥', '🧼', '💅', '🌹', '🌾', '🌺'].map((icon) => (
                       <button
                         key={icon}
                         type="button"
-                        onClick={() => setNewCatIcon(icon)}
+                        onClick={() => setNewCatIcon(newCatIcon === icon ? '' : icon)}
                         className={`w-7 h-7 rounded-lg text-sm flex items-center justify-center transition-all cursor-pointer ${
                           newCatIcon === icon ? 'bg-[#7b3e1d] text-white scale-110 shadow-xs' : 'hover:bg-stone-100 text-stone-700'
                         }`}
+                        title={newCatIcon === icon ? 'Click to unselect' : icon}
                       >
                         {icon}
                       </button>
@@ -1216,7 +1241,7 @@ export const AdminPortal: React.FC = () => {
                     type="text"
                     value={newCatIcon}
                     onChange={(e) => setNewCatIcon(e.target.value)}
-                    placeholder="Or type custom emoji / text icon"
+                    placeholder="Leave empty or type custom emoji / text icon"
                     className="w-full px-3 py-1.5 text-xs bg-white border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
                   />
                 </div>
@@ -1246,9 +1271,15 @@ export const AdminPortal: React.FC = () => {
                 {categories.map((cat) => (
                   <div key={cat.id || cat.slug} className="flex items-center justify-between p-3 rounded-xl bg-white border border-stone-200/80 hover:border-stone-300 transition-colors">
                     <div className="flex items-center gap-2.5">
-                      <span className="text-xl w-8 h-8 rounded-lg bg-stone-50 border border-stone-200 flex items-center justify-center shrink-0">
-                        {cat.icon || '🛍️'}
-                      </span>
+                      {cat.icon ? (
+                        <span className="text-xl w-8 h-8 rounded-lg bg-stone-50 border border-stone-200 flex items-center justify-center shrink-0">
+                          {cat.icon}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-mono text-stone-300 w-8 h-8 rounded-lg bg-stone-50 border border-dashed border-stone-200 flex items-center justify-center shrink-0" title="No icon">
+                          —
+                        </span>
+                      )}
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-xs text-stone-900 block">{cat.name}</span>
@@ -1343,18 +1374,42 @@ export const AdminPortal: React.FC = () => {
                       {/* Icon library selector in Edit Modal */}
                       <div className="space-y-1.5 pt-1">
                         <div className="flex items-center justify-between">
-                          <label className="text-[10px] font-bold text-stone-700">Category Icon</label>
-                          <span className="text-xs font-bold text-[#7b3e1d]">Selected: {editCatIcon}</span>
+                          <label className="text-[10px] font-bold text-stone-700">Category Icon (Optional)</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-[#7b3e1d]">
+                              {editCatIcon ? `Selected: ${editCatIcon}` : 'No icon (Optional)'}
+                            </span>
+                            {editCatIcon && (
+                              <button
+                                type="button"
+                                onClick={() => setEditCatIcon('')}
+                                className="px-2 py-0.5 text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded border border-red-200 transition-colors cursor-pointer"
+                              >
+                                ✕ Remove Icon
+                              </button>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex flex-wrap gap-1.5 p-2 bg-stone-50 rounded-xl border border-stone-200">
+                        <div className="flex flex-wrap gap-1.5 p-2 bg-stone-50 rounded-xl border border-stone-200 items-center">
+                          <button
+                            type="button"
+                            onClick={() => setEditCatIcon('')}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                              !editCatIcon ? 'bg-stone-800 text-white shadow-xs' : 'bg-white hover:bg-stone-200 text-stone-600'
+                            }`}
+                            title="No Icon"
+                          >
+                            🚫 None
+                          </button>
                           {['🧴', '🌿', '🛍️', '🦶', '🎁', '✨', '🌸', '💧', '👑', '⭐', '🍃', '🍯', '🥥', '🧼', '💅', '🌹', '🌾', '🌺'].map((icon) => (
                             <button
                               key={icon}
                               type="button"
-                              onClick={() => setEditCatIcon(icon)}
+                              onClick={() => setEditCatIcon(editCatIcon === icon ? '' : icon)}
                               className={`w-7 h-7 rounded-lg text-sm flex items-center justify-center transition-all cursor-pointer ${
                                 editCatIcon === icon ? 'bg-[#7b3e1d] text-white scale-110 shadow-xs' : 'hover:bg-white text-stone-700'
                               }`}
+                              title={editCatIcon === icon ? 'Click to unselect' : icon}
                             >
                               {icon}
                             </button>
@@ -1364,7 +1419,7 @@ export const AdminPortal: React.FC = () => {
                           type="text"
                           value={editCatIcon}
                           onChange={(e) => setEditCatIcon(e.target.value)}
-                          placeholder="Custom emoji or icon"
+                          placeholder="Leave empty for no icon, or enter custom emoji"
                           className="w-full px-3 py-1.5 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden focus:border-[#7b3e1d]"
                         />
                       </div>
@@ -2825,7 +2880,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
               >
                 {categories.filter((c) => c.slug !== 'all').map((c) => (
                   <option key={c.slug} value={c.slug}>
-                    {c.icon} {c.name}
+                    {c.icon ? `${c.icon} ` : ''}{c.name}
                   </option>
                 ))}
               </select>

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { Dali3DCanvas } from './3d/Dali3DCanvas';
 import { PRODUCTS, PAKISTAN_CITIES } from '../data/products';
-import { ProductCard } from './ProductCard';
 import {
   Star,
   ShoppingBag,
@@ -59,7 +58,6 @@ export const ProductDetailPage: React.FC = () => {
 
   const isFavorited = isInWishlist(product.id);
   const allImages = [product.image, ...(product.galleryImages || [])];
-  const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
 
   const currentPrice = product.price;
   const currentOriginalPrice = product.originalPrice;
@@ -541,30 +539,6 @@ export const ProductDetailPage: React.FC = () => {
                   <span className="text-emerald-700 font-semibold text-[11px]">✓ Verified</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Related Products Carousel */}
-        <div className="pt-12 border-t border-stone-200 space-y-6">
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-[11px] font-heading font-extrabold uppercase tracking-widest text-[#d0473e]">RECOMMENDED FOR YOU</span>
-              <h3 className="font-heading text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-stone-900 mt-1">
-                More Formulations & Products
-              </h3>
-            </div>
-            <button
-              onClick={() => setCurrentPage('shop')}
-              className="text-xs font-heading font-bold text-[#d0473e] hover:underline uppercase tracking-wider cursor-pointer"
-            >
-              View All Products →
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {relatedProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </div>

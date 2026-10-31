@@ -157,7 +157,7 @@ export const BannerFormModal: React.FC<BannerFormModalProps> = ({
               >
                 {categories.map((c) => (
                   <option key={c.slug} value={c.slug}>
-                    {c.icon} {c.name}
+                    {c.icon ? `${c.icon} ` : ''}{c.name}
                   </option>
                 ))}
               </select>
