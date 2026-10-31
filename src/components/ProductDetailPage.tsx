@@ -302,16 +302,16 @@ export const ProductDetailPage: React.FC = () => {
 
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 btn-gp-primary py-3.5 px-4 sm:px-6 rounded-xs text-xs sm:text-sm font-heading font-extrabold tracking-[0.14em] flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                  className="flex-1 btn-gp-primary py-4 px-4 sm:px-6 rounded-xl text-xs sm:text-sm font-heading font-extrabold tracking-[0.14em] flex items-center justify-center gap-2.5 shadow-md hover:shadow-xl transition-all cursor-pointer group/btn"
                 >
-                  <ShoppingBag className="w-4 h-4" />
+                  <ShoppingBag className="w-4 h-4 group-hover/btn:-translate-y-0.5 group-hover/btn:rotate-6 transition-transform" />
                   <span>ADD TO CART • RS. {(currentPrice * quantity).toLocaleString()}</span>
                 </button>
               </div>
 
               <button
                 onClick={handleBuyNow}
-                className="w-full py-3.5 px-6 rounded-xs bg-stone-900 hover:bg-black text-white font-heading font-extrabold text-xs uppercase tracking-[0.16em] shadow-md transition-all cursor-pointer"
+                className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 hover:from-black hover:to-stone-900 text-white font-heading font-extrabold text-xs uppercase tracking-[0.16em] shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.99] transition-all cursor-pointer border border-stone-800"
               >
                 BUY NOW (CASH ON DELIVERY)
               </button>
@@ -320,9 +320,9 @@ export const ProductDetailPage: React.FC = () => {
                 href={getWhatsAppUrl(`As-salamu alaykum Dail Cosmetics!\n\nI want to order:\n• ${product.name} (${product.volume})\nQty: ${quantity} • Total: Rs. ${(currentPrice * quantity).toLocaleString()}\nCity: ${calcCity}\n\nPlease confirm delivery!`)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 px-4 rounded-xs bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer uppercase tracking-wider"
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#20ba59] hover:to-[#0f7a6d] text-white text-xs font-heading font-extrabold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer uppercase tracking-wider group/wa"
               >
-                <Phone className="w-3.5 h-3.5" />
+                <Phone className="w-4 h-4 group-hover/wa:rotate-12 transition-transform" />
                 <span>Instant Order via WhatsApp ({storeSettings.whatsappNumber})</span>
               </a>
             </div>

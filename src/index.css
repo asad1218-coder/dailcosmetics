@@ -57,21 +57,27 @@
 }
 
 .btn-gp-primary {
-  background-color: #d0473e;
+  background: linear-gradient(135deg, #d0473e 0%, #e05349 50%, #b83a32 100%);
   color: #ffffff;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  border-radius: 3px;
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px -2px rgba(208, 71, 62, 0.3);
 }
 
 .btn-gp-primary:hover {
-  background-color: #b83a32;
-  box-shadow: 0 4px 14px rgba(208, 71, 62, 0.35);
+  background: linear-gradient(135deg, #b83a32 0%, #d0473e 50%, #9e2820 100%);
+  box-shadow: 0 8px 24px -2px rgba(208, 71, 62, 0.45);
+  transform: translateY(-2px);
+}
+
+.btn-gp-primary:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-gp-primary::after {
@@ -82,7 +88,7 @@
   width: 150%;
   height: 100%;
   transform: skewX(-20deg);
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.35), transparent);
   transition: none;
 }
 
@@ -92,48 +98,80 @@
 }
 
 .btn-gp-gold {
-  background: #c59b27;
+  background: linear-gradient(135deg, #c59b27 0%, #ddb33f 50%, #aa831b 100%);
   color: #ffffff;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  border-radius: 3px;
-  transition: all 0.25s ease;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px -2px rgba(197, 155, 39, 0.35);
 }
 
 .btn-gp-gold:hover {
-  background: #aa831b;
+  background: linear-gradient(135deg, #aa831b 0%, #c59b27 50%, #8f6d14 100%);
+  box-shadow: 0 8px 22px -2px rgba(197, 155, 39, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-gp-gold:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-gp-outline {
-  border: 1px solid #111111;
+  border: 1.5px solid #111111;
   color: #111111;
   background: #ffffff;
   font-family: var(--font-heading);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  border-radius: 3px;
-  transition: all 0.25s ease;
+  border-radius: 10px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-gp-outline:hover {
   background: #111111;
   color: #ffffff;
+  border-color: #111111;
+  box-shadow: 0 6px 18px -2px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-gp-outline:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-terracotta {
-  background-color: #d0473e;
+  background: linear-gradient(135deg, #d0473e 0%, #b83a32 100%);
   color: #ffffff;
-  font-weight: 600;
-  transition: all 0.25s ease;
+  font-weight: 700;
+  border-radius: 10px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-terracotta:hover {
-  background-color: #b83a32;
-  box-shadow: 0 8px 20px -4px rgba(208, 71, 62, 0.35);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #b83a32 0%, #9e2820 100%);
+  box-shadow: 0 8px 20px -4px rgba(208, 71, 62, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-terracotta:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Card Luxury Glow & Micro-Interactions */
+.product-card-enhanced {
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.product-card-enhanced:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 32px -4px rgba(123, 62, 29, 0.12), 0 6px 14px -2px rgba(208, 71, 62, 0.08);
+  border-color: rgba(197, 155, 39, 0.55);
 }
 
 .text-gold-gradient {

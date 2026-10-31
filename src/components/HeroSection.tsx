@@ -112,15 +112,15 @@ export const HeroSection: React.FC = () => {
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
               <button
                 onClick={handlePrimaryAction}
-                className="btn-gp-primary px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-extrabold tracking-[0.18em] shadow-lg flex items-center gap-2 group cursor-pointer"
+                className="btn-gp-primary px-7 sm:px-9 py-4 sm:py-4.5 text-xs sm:text-sm font-extrabold tracking-[0.18em] shadow-xl hover:shadow-2xl flex items-center gap-2.5 group cursor-pointer rounded-xl hover:scale-105 active:scale-95 transition-all duration-300"
               >
                 <span>{slide.buttonText}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-200" />
               </button>
 
               <button
                 onClick={handleSecondaryAction}
-                className="px-5 sm:px-7 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/40 font-heading text-xs sm:text-sm font-bold uppercase tracking-[0.14em] rounded-xs backdrop-blur-xs transition-colors cursor-pointer"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 hover:bg-white text-white hover:text-stone-900 border border-white/40 hover:border-white font-heading text-xs sm:text-sm font-bold uppercase tracking-[0.14em] rounded-xl backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
               >
                 {slide.secondaryButtonText}
               </button>
@@ -132,7 +132,7 @@ export const HeroSection: React.FC = () => {
         {/* Carousel Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-black/40 hover:bg-[#d0473e] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer border border-white/20"
+          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-black/40 hover:bg-[#d0473e] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all duration-300 hover:scale-110 active:scale-90 cursor-pointer border border-white/20 shadow-lg"
           aria-label="Previous Slide"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -140,7 +140,7 @@ export const HeroSection: React.FC = () => {
 
         <button
           onClick={nextSlide}
-          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-black/40 hover:bg-[#d0473e] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer border border-white/20"
+          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-black/40 hover:bg-[#d0473e] text-white rounded-full flex items-center justify-center backdrop-blur-xs transition-all duration-300 hover:scale-110 active:scale-90 cursor-pointer border border-white/20 shadow-lg"
           aria-label="Next Slide"
         >
           <ChevronRight className="w-6 h-6" />

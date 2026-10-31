@@ -36,13 +36,13 @@ export const TrustPillarsBar: React.FC = () => {
           {pillars.map((item, idx) => (
             <div 
               key={idx}
-              className="flex items-center sm:items-start gap-4 p-3 rounded-xs group hover:bg-stone-50 transition-colors"
+              className="flex items-center sm:items-start gap-4 p-4 rounded-xl border border-stone-200/70 bg-gradient-to-b from-white to-stone-50/50 hover:border-[#c59b27]/70 shadow-2xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-default"
             >
-              <div className="p-3 bg-red-50 rounded-xs shrink-0 group-hover:scale-110 transition-transform">
+              <div className="p-3 bg-red-50 group-hover:bg-[#d0473e] rounded-xl shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-2xs text-[#d0473e] group-hover:text-white [&>svg]:transition-colors [&>svg]:group-hover:text-white">
                 {item.icon}
               </div>
               <div>
-                <h4 className="font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-900">
+                <h4 className="font-heading text-xs sm:text-sm font-extrabold uppercase tracking-wider text-stone-900 group-hover:text-[#d0473e] transition-colors duration-200">
                   {item.title}
                 </h4>
                 {item.isLink ? (

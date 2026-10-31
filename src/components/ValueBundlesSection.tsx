@@ -104,10 +104,10 @@ export const ValueBundlesSection: React.FC = () => {
           {bundles.map((bundle) => (
             <div
               key={bundle.id}
-              className="group bg-white border border-[#e8e8e1] hover:border-[#d0473e] rounded-xs p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-lg relative"
+              className="group bg-white border border-stone-200/90 hover:border-[#c59b27] rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 relative overflow-hidden"
             >
               {/* Savings Badge */}
-              <div className="absolute top-4 right-4 z-10 bg-[#d0473e] text-white text-[10px] font-heading font-extrabold uppercase px-2.5 py-1 rounded-xs tracking-wider shadow-sm">
+              <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-[#d0473e] to-[#e8544a] text-white text-[10px] font-heading font-extrabold uppercase px-3 py-1 rounded-full tracking-wider shadow-md">
                 SAVE RS. {bundle.saving.toLocaleString()}
               </div>
 
@@ -115,14 +115,14 @@ export const ValueBundlesSection: React.FC = () => {
                 {/* Image */}
                 <div 
                   onClick={() => handleViewDetails(bundle)}
-                  className="relative aspect-4/3 w-full bg-[#fafafa] rounded-xs overflow-hidden p-4 mb-4 flex items-center justify-center cursor-pointer"
+                  className="relative aspect-4/3 w-full bg-gradient-to-b from-stone-50 to-stone-100/50 rounded-xl overflow-hidden p-4 mb-4 flex items-center justify-center cursor-pointer border border-stone-100"
                 >
                   <img 
                     src={bundle.image} 
                     alt={bundle.title} 
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain group-hover:scale-108 transition-transform duration-500 ease-out"
                   />
-                  <span className="absolute bottom-2 left-2 bg-stone-900 text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-xs tracking-wider">
+                  <span className="absolute bottom-2.5 left-2.5 bg-stone-900/90 backdrop-blur-xs text-amber-300 border border-amber-400/30 text-[9px] font-bold uppercase px-2.5 py-0.5 rounded-full tracking-wider shadow-xs">
                     {bundle.badge}
                   </span>
                 </div>
@@ -134,12 +134,12 @@ export const ValueBundlesSection: React.FC = () => {
                 >
                   {bundle.title}
                 </h3>
-                <p className="text-stone-500 text-xs mt-1 line-clamp-2">
+                <p className="text-stone-500 text-xs mt-1.5 line-clamp-2 leading-relaxed">
                   {bundle.tagline}
                 </p>
 
                 {/* Features Checklist */}
-                <ul className="mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+                <ul className="mt-4 space-y-2 border-t border-stone-100 pt-3.5">
                   {bundle.features.map((feat, i) => (
                     <li key={i} className="flex items-center gap-2 text-xs text-stone-700">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -150,7 +150,7 @@ export const ValueBundlesSection: React.FC = () => {
               </div>
 
               {/* Bottom Price & Button */}
-              <div className="mt-6 pt-4 border-t border-stone-100 space-y-3">
+              <div className="mt-6 pt-4 border-t border-stone-100 space-y-3.5">
                 <div className="flex items-baseline justify-between">
                   <div className="flex items-baseline gap-2">
                     <span className="font-heading text-lg sm:text-xl font-extrabold text-[#d0473e]">
@@ -160,16 +160,16 @@ export const ValueBundlesSection: React.FC = () => {
                       Rs. {bundle.originalPrice.toLocaleString()}
                     </span>
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-xs flex items-center gap-1">
-                    <Truck className="w-3 h-3" /> Free Delivery
+                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                    <Truck className="w-3 h-3 text-emerald-600" /> Free Delivery
                   </span>
                 </div>
 
                 <button
                   onClick={() => handleAddBundle(bundle)}
-                  className="w-full btn-gp-primary py-3 text-xs font-heading font-extrabold tracking-[0.14em] flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full btn-gp-primary py-3.5 text-xs font-heading font-extrabold tracking-[0.14em] flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-xl rounded-xl transition-all duration-300 group/btn"
                 >
-                  <ShoppingBag className="w-4 h-4" />
+                  <ShoppingBag className="w-4 h-4 group-hover/btn:-translate-y-0.5 group-hover/btn:rotate-6 transition-transform duration-200" />
                   <span>CLAIM THIS BUNDLE</span>
                 </button>
               </div>

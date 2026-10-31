@@ -43,21 +43,21 @@ export const CategoryCirclesBar: React.FC = () => {
                 className="flex flex-col items-center gap-2.5 cursor-pointer group shrink-0"
               >
                 {/* Large Prominent Circle Avatar with Ring */}
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-white border-2 border-stone-200 group-hover:border-[#d0473e] transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-106 overflow-hidden flex items-center justify-center">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-gradient-to-b from-white to-stone-50 border-2 border-stone-200/90 group-hover:border-[#c59b27] group-hover:ring-4 group-hover:ring-[#c59b27]/20 transition-all duration-300 shadow-sm group-hover:shadow-xl group-hover:scale-108 overflow-hidden flex items-center justify-center">
                   <img 
                     src={imageSrc} 
                     alt={cat.name} 
-                    className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-contain p-1 group-hover:scale-112 transition-transform duration-500 ease-out"
                   />
                   {/* Floating Price Tag */}
                   {priceTag && (
-                    <span className="absolute bottom-1 inset-x-2 bg-[#d0473e] text-white text-[8px] sm:text-[9.5px] font-heading font-extrabold uppercase tracking-wider text-center py-0.5 rounded-full shadow-xs">
+                    <span className="absolute bottom-1.5 inset-x-2 bg-gradient-to-r from-[#d0473e] to-[#e65c53] text-white text-[8px] sm:text-[9.5px] font-heading font-extrabold uppercase tracking-wider text-center py-0.5 rounded-full shadow-xs group-hover:scale-105 transition-transform duration-200">
                       {priceTag}
                     </span>
                   )}
                   {/* Category Icon Badge */}
                   {cat.icon && (
-                    <span className="absolute top-1 right-2 text-xs sm:text-sm drop-shadow-xs pointer-events-none">
+                    <span className="absolute top-1.5 right-2.5 text-xs sm:text-sm drop-shadow-xs pointer-events-none group-hover:scale-125 transition-transform duration-300">
                       {cat.icon}
                     </span>
                   )}
@@ -65,7 +65,7 @@ export const CategoryCirclesBar: React.FC = () => {
 
                 {/* Category Label */}
                 <div className="text-center">
-                  <span className="font-heading text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-800 group-hover:text-[#d0473e] block max-w-[100px] sm:max-w-[120px] leading-tight transition-colors">
+                  <span className="font-heading text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-800 group-hover:text-[#d0473e] block max-w-[100px] sm:max-w-[120px] leading-tight transition-colors duration-200">
                     {cat.name}
                   </span>
                 </div>

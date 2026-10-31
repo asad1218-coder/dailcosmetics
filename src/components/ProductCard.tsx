@@ -63,33 +63,33 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="group relative cursor-pointer bg-white border border-[#e8e8e1] hover:border-[#d0473e] p-2.5 sm:p-3.5 transition-all duration-300 flex flex-col justify-between rounded-xs shadow-2xs hover:shadow-md"
+      className="group relative cursor-pointer bg-white border border-stone-200/80 hover:border-[#c59b27] p-3 sm:p-4 transition-all duration-300 ease-out flex flex-col justify-between rounded-2xl shadow-xs hover:shadow-xl hover:-translate-y-1.5 overflow-hidden"
     >
-      {/* 1. Golden Pearl Product Image Box */}
-      <div className="relative w-full aspect-square rounded-xs overflow-hidden bg-[#fafafa] flex items-center justify-center p-3 sm:p-4 group/image">
+      {/* 1. Product Image Box */}
+      <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-stone-50/70 to-stone-100/40 flex items-center justify-center p-3 sm:p-4 group/image border border-stone-100">
         
         {/* Product Image */}
         <img
           src={displayImage}
           alt={product.name}
-          className="w-full h-full object-contain group-hover/image:scale-106 transition-transform duration-500"
+          className="w-full h-full object-contain group-hover/image:scale-108 transition-transform duration-500 ease-out"
           loading="lazy"
         />
 
-        {/* Golden Pearl Red Sale / Best Seller Tag (Top Left) */}
+        {/* Badges (Top Left) */}
         <div className="absolute top-2 left-2 flex flex-col gap-1 items-start z-10 pointer-events-none">
           {discountPercent > 0 ? (
-            <span className="bg-[#d0473e] text-white text-[9px] sm:text-[10px] font-heading font-extrabold uppercase px-2 py-0.5 tracking-wider rounded-xs shadow-xs">
+            <span className="bg-gradient-to-r from-[#d0473e] to-[#e8544a] text-white text-[9px] sm:text-[10px] font-heading font-extrabold uppercase px-2.5 py-0.5 tracking-wider rounded-full shadow-xs">
               SAVE {discountPercent}%
             </span>
           ) : product.badge ? (
-            <span className="bg-[#d0473e] text-white text-[9px] sm:text-[10px] font-heading font-extrabold uppercase px-2 py-0.5 tracking-wider rounded-xs shadow-xs">
+            <span className="bg-gradient-to-r from-[#d0473e] to-[#e8544a] text-white text-[9px] sm:text-[10px] font-heading font-extrabold uppercase px-2.5 py-0.5 tracking-wider rounded-full shadow-xs">
               {product.badge}
             </span>
           ) : null}
 
           {product.badge && discountPercent > 0 && (
-            <span className="bg-stone-900 text-white text-[8px] sm:text-[9px] font-heading font-bold uppercase px-1.5 py-0.5 tracking-wider rounded-xs">
+            <span className="bg-stone-900/90 backdrop-blur-xs text-amber-300 border border-amber-400/30 text-[8px] sm:text-[9px] font-heading font-extrabold uppercase px-2 py-0.5 tracking-wider rounded-full shadow-xs">
               {product.badge}
             </span>
           )}
@@ -98,16 +98,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Wishlist Heart Button (Top Right) */}
         <button
           onClick={handleToggleWishlist}
-          className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-[#d0473e] flex items-center justify-center shadow-xs transition-colors z-20 cursor-pointer"
+          className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-xs hover:bg-rose-50 text-stone-600 hover:text-[#d0473e] hover:scale-115 active:scale-90 flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-200 z-20 cursor-pointer border border-stone-200/50"
           title="Add to Wishlist"
         >
-          <Heart className={`w-4 h-4 ${isFavorited ? 'fill-[#d0473e] text-[#d0473e]' : ''}`} />
+          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform ${isFavorited ? 'fill-[#d0473e] text-[#d0473e] scale-110' : ''}`} />
         </button>
 
         {/* Quick View Hover Button */}
         <button
           onClick={handleQuickView}
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/95 hover:bg-stone-900 hover:text-white text-stone-800 text-[10px] font-heading font-bold uppercase tracking-widest px-3 py-1.5 rounded-xs shadow-md opacity-0 group-hover:opacity-100 transition-all z-20 flex items-center gap-1 cursor-pointer shrink-0"
+          className="absolute bottom-2.5 left-1/2 -translate-x-1/2 bg-stone-900/95 hover:bg-[#d0473e] text-white text-[10px] font-heading font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-20 flex items-center gap-1.5 cursor-pointer backdrop-blur-xs shrink-0"
         >
           <Eye className="w-3 h-3" />
           <span>Quick View</span>
@@ -115,12 +115,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Dual-Angle Pill Switcher (Jar / Bottle vs Packaging Box) */}
         {product.galleryImages?.length > 1 && (
-          <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 bg-white/80 backdrop-blur-xs p-0.5 rounded-xs border border-stone-200">
+          <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 bg-white/90 backdrop-blur-xs p-0.5 rounded-full border border-stone-200 shadow-2xs">
             <button
               onClick={(e) => handleAngleToggle(e, 'product')}
-              className={`px-1.5 py-0.5 text-[8px] font-bold uppercase rounded-xs transition-colors ${
+              className={`px-2 py-0.5 text-[8px] font-bold uppercase rounded-full transition-all ${
                 activeAngle === 'product'
-                  ? 'bg-stone-900 text-white'
+                  ? 'bg-stone-900 text-white shadow-2xs'
                   : 'text-stone-600 hover:text-black'
               }`}
             >
@@ -128,9 +128,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </button>
             <button
               onClick={(e) => handleAngleToggle(e, 'box')}
-              className={`px-1.5 py-0.5 text-[8px] font-bold uppercase rounded-xs transition-colors ${
+              className={`px-2 py-0.5 text-[8px] font-bold uppercase rounded-full transition-all ${
                 activeAngle === 'box'
-                  ? 'bg-stone-900 text-white'
+                  ? 'bg-stone-900 text-white shadow-2xs'
                   : 'text-stone-600 hover:text-black'
               }`}
             >
@@ -142,28 +142,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* 2. Product Meta & Details */}
-      <div className="pt-3 pb-1 flex flex-col flex-1 justify-between space-y-2">
+      <div className="pt-3 pb-0.5 flex flex-col flex-1 justify-between space-y-2.5">
         
         <div>
           {/* Star Rating */}
-          <div className="flex items-center gap-1 mb-1">
+          <div className="flex items-center gap-1.5 mb-1">
             <div className="flex items-center text-amber-400">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            <span className="text-[10px] text-stone-500 font-medium">
+            <span className="text-[10px] text-stone-500 font-semibold">
               ({product.reviewCount})
             </span>
           </div>
 
-          {/* Product Title (Poppins) */}
-          <h3 className="font-heading text-xs sm:text-sm font-bold text-stone-900 group-hover:text-[#d0473e] transition-colors line-clamp-2 leading-snug">
+          {/* Product Title */}
+          <h3 className="font-heading text-xs sm:text-[13px] font-bold text-stone-900 group-hover:text-[#d0473e] transition-colors duration-200 line-clamp-2 leading-snug">
             {product.name}
           </h3>
 
           {/* Volume / Size */}
-          <p className="text-[11px] text-stone-500 mt-0.5 truncate">
+          <p className="text-[10px] sm:text-[11px] text-stone-400 font-medium mt-0.5 truncate">
             {product.volume}
           </p>
         </div>
@@ -171,7 +171,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Price & Action Buttons */}
         <div className="pt-1 space-y-2">
           
-          {/* Prices (Strikethrough original + Red Current) */}
+          {/* Prices */}
           <div className="flex items-baseline gap-2">
             <span className="font-heading text-sm sm:text-base font-extrabold text-[#d0473e]">
               Rs. {product.price.toLocaleString()}
@@ -186,18 +186,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* Golden Pearl Red Add To Cart Button */}
           <button
             onClick={handleAddToCart}
-            className="w-full btn-gp-primary py-2.5 sm:py-3 text-[11px] sm:text-xs font-heading font-extrabold tracking-[0.14em] flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+            className="w-full btn-gp-primary py-2.5 sm:py-3 text-[11px] sm:text-xs font-heading font-extrabold tracking-[0.14em] flex items-center justify-center gap-2 cursor-pointer shadow-xs hover:shadow-md transition-all duration-300 rounded-xl group/btn"
           >
-            <ShoppingBag className="w-3.5 h-3.5" />
+            <ShoppingBag className="w-3.5 h-3.5 group-hover/btn:-translate-y-0.5 group-hover/btn:rotate-6 transition-transform duration-200" />
             <span>ADD TO CART</span>
           </button>
 
           {/* WhatsApp Direct Order Button */}
           <button
             onClick={handleWhatsAppOrder}
-            className="w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300/80 rounded-xs text-[10px] sm:text-[11px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+            className="w-full py-2 px-3 bg-emerald-50 hover:bg-[#25D366] text-emerald-800 hover:text-white border border-emerald-200 hover:border-[#25D366] rounded-xl text-[10px] sm:text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer shadow-2xs hover:shadow-md hover:scale-[1.01] active:scale-[0.98] group/wa"
           >
-            <Phone className="w-3 h-3 text-emerald-600" />
+            <Phone className="w-3.5 h-3.5 text-emerald-600 group-hover/wa:text-white group-hover/wa:rotate-12 transition-all duration-200" />
             <span>Order on WhatsApp</span>
           </button>
 

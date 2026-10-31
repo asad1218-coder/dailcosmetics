@@ -45,16 +45,16 @@ export const BestSellersSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Tab Filters (Golden Pearl Impulse Theme Style) */}
+        {/* Tab Filters */}
         <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-3.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-heading font-bold uppercase tracking-wider rounded-xs transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2 text-[11px] sm:text-xs font-heading font-extrabold uppercase tracking-wider rounded-xl transition-all duration-200 cursor-pointer whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-stone-900 text-white shadow-xs'
-                  : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
+                  ? 'bg-gradient-to-r from-stone-900 to-stone-800 text-amber-300 border border-amber-400/30 shadow-md scale-102'
+                  : 'bg-stone-100/80 hover:bg-[#d0473e] hover:text-white text-stone-700 hover:shadow-sm'
               }`}
             >
               {tab.label}
@@ -74,10 +74,10 @@ export const BestSellersSection: React.FC = () => {
       <div className="mt-8 sm:mt-12 text-center">
         <button
           onClick={handleViewAll}
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-white hover:bg-stone-900 hover:text-white border-2 border-stone-900 text-stone-900 font-heading text-xs font-extrabold uppercase tracking-[0.16em] rounded-xs shadow-xs transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2.5 px-8 py-4 bg-white hover:bg-stone-900 text-stone-900 hover:text-white border-2 border-stone-900 font-heading text-xs font-extrabold uppercase tracking-[0.16em] rounded-xl shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
         >
           <span>VIEW FULL CATALOG ({products.length} PRODUCTS)</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
         </button>
       </div>
 

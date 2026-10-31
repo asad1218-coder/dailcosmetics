@@ -55,25 +55,25 @@ export const IngredientAlchemySection: React.FC = () => {
         {actives.map((item, idx) => (
           <div
             key={idx}
-            className="p-6 rounded-2xl bg-white border border-stone-200/90 shadow-sm flex flex-col justify-between space-y-4 hover:border-[#c59b27]/60 hover:shadow-md transition-all"
+            className="p-6 rounded-2xl bg-white border border-stone-200/90 shadow-xs flex flex-col justify-between space-y-4 hover:border-[#c59b27] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-default"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200/70 flex items-center justify-center text-2xl mb-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 group-hover:bg-[#d0473e] border border-amber-200/70 group-hover:border-[#d0473e] flex items-center justify-center text-2xl mb-4 group-hover:scale-115 group-hover:rotate-6 transition-all duration-300 shadow-2xs">
                 {item.icon}
               </div>
-              <h3 className="font-serif-luxury text-lg font-bold text-stone-900">
+              <h3 className="font-serif-luxury text-lg font-bold text-stone-900 group-hover:text-[#d0473e] transition-colors duration-200">
                 {item.name}
               </h3>
               <p className="text-[11px] font-semibold text-[#7b3e1d] mt-0.5">
                 {item.sub}
               </p>
-              <p className="text-xs text-stone-600 mt-2.5 leading-relaxed">
+              <p className="text-xs text-stone-600 mt-2.5 leading-relaxed font-normal">
                 {item.desc}
               </p>
             </div>
 
             <div className="pt-3 border-t border-stone-100">
-              <span className="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold bg-stone-100 text-stone-700">
+              <span className="inline-block px-3 py-1 rounded-full text-[10px] font-extrabold bg-stone-100 group-hover:bg-[#d0473e] text-stone-700 group-hover:text-white transition-colors duration-200 shadow-2xs">
                 {item.badge}
               </span>
             </div>
