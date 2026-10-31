@@ -132,20 +132,20 @@ export const Navbar: React.FC = () => {
           {/* Golden Pearl / Dail Brand Logo */}
           <div 
             onClick={() => navigateTo('home')}
-            className="cursor-pointer flex items-center gap-3 group"
+            className="cursor-pointer flex items-center gap-2.5 sm:gap-3 group"
           >
-            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden bg-white p-0.5 border border-[#c59b27] shadow-xs group-hover:scale-105 transition-transform shrink-0">
+            <div className="relative w-12 h-12 sm:w-14 sm:h-14 group-hover:scale-105 transition-transform shrink-0 drop-shadow-xs">
               <img 
                 src="/images/dail_logo.png" 
                 alt="Dail Cosmetics Pakistan Logo" 
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="flex flex-col">
-              <span className="font-heading text-lg sm:text-2xl font-extrabold tracking-[0.1em] text-stone-900 group-hover:text-[#d0473e] transition-colors uppercase leading-none">
+            <div className="flex flex-col justify-center">
+              <span className="font-heading text-lg sm:text-2xl font-extrabold tracking-[0.08em] text-stone-900 group-hover:text-[#d0473e] transition-colors uppercase leading-none">
                 DAIL <span className="text-[#c59b27]">COSMETICS</span>
               </span>
-              <span className="text-[9px] sm:text-[10px] tracking-[0.25em] text-stone-500 font-bold uppercase mt-1">
+              <span className="text-[9px] sm:text-[10px] tracking-[0.22em] text-stone-500 font-bold uppercase mt-1">
                 ORGANICS PAKISTAN
               </span>
             </div>
@@ -352,7 +352,7 @@ export const Navbar: React.FC = () => {
             {/* Drawer Top Header */}
             <div className="p-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
               <div className="flex items-center gap-2.5">
-                <img src="/images/dail_logo.png" alt="Dail Logo" className="w-8 h-8 object-contain" />
+                <img src="/images/dail_logo.png" alt="Dail Logo" className="w-10 h-10 object-contain drop-shadow-xs" />
                 <span className="font-heading font-extrabold text-stone-900 tracking-wider uppercase text-sm">
                   DAIL COSMETICS
                 </span>

@@ -76,8 +76,8 @@ export const Footer: React.FC = () => {
           
           {/* Column 1: Brand About */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <img src="/images/dail_logo.png" alt="Dail Cosmetics Logo" className="w-9 h-9 object-contain" />
+            <div className="flex items-center gap-3">
+              <img src="/images/dail_logo.png" alt="Dail Cosmetics Logo" className="w-12 h-12 object-contain drop-shadow-xs" />
               <div>
                 <span className="font-heading font-extrabold text-base text-white tracking-wider uppercase block">
                   DAIL <span className="text-[#c59b27]">COSMETICS</span>

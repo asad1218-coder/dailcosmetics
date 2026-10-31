@@ -11,7 +11,7 @@ export const AboutPage: React.FC = () => {
         
         {/* Hero Header with Logo */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="w-20 h-20 rounded-full mx-auto p-1 bg-white border border-amber-300 shadow-md overflow-hidden mb-2">
+          <div className="w-24 h-24 mx-auto drop-shadow-md mb-2">
             <img 
               src="/images/dail_logo.png" 
               alt="Dail Cosmetics" 
