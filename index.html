@@ -11,31 +11,188 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://www.dailcosmetics.com/" />
 
+    <!-- Geographic & Regional Targeting for Pakistani & International Search Engines (GEO) -->
+    <meta name="geo.region" content="PK" />
+    <meta name="geo.placename" content="Pakistan" />
+    <meta name="geo.position" content="30.3753;69.3451" />
+    <meta name="ICBM" content="30.3753, 69.3451" />
+    <meta name="target" content="all" />
+    <meta name="audience" content="all" />
+    <meta name="coverage" content="Pakistan" />
+    <meta name="distribution" content="Global" />
+    <meta name="rating" content="General" />
+
     <!-- Open Graph / Facebook / WhatsApp Preview -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.dailcosmetics.com/" />
     <meta property="og:title" content="Dail Cosmetics — Pakistan's #1 Organic Herbal Hair Oil & Steroid-Free Skincare" />
-    <meta property="og:description" content="Official Dail Cosmetics Pakistan. 100% Organic Herbal Hair Oil, Dail Beauty Cream (Strictly Without Steroid), and Hand & Foot Whitening Cream." />
+    <meta property="og:description" content="Official Dail Cosmetics Pakistan. 100% Organic Herbal Hair Oil (120ml), Dail Beauty Cream (Strictly Without Steroid), and Hand & Foot Whitening Cream. Cash on Delivery nationwide." />
     <meta property="og:image" content="https://www.dailcosmetics.com/images/dail_logo.png" />
     <meta property="og:site_name" content="Dail Cosmetics" />
+    <meta property="og:locale" content="en_PK" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://www.dailcosmetics.com/" />
     <meta name="twitter:title" content="Dail Cosmetics — Pakistan's #1 Organic Herbal Hair Oil & Steroid-Free Skincare" />
-    <meta name="twitter:description" content="Official Dail Cosmetics Pakistan. 100% Organic Herbal Hair Oil, Dail Beauty Cream (Strictly Without Steroid), and Hand & Foot Whitening Cream." />
+    <meta name="twitter:description" content="Official Dail Cosmetics Pakistan. 100% Organic Herbal Hair Oil (120ml), Dail Beauty Cream (Strictly Without Steroid), and Hand & Foot Whitening Cream." />
     <meta name="twitter:image" content="https://www.dailcosmetics.com/images/dail_logo.png" />
 
-    <!-- Structured Data (JSON-LD) for Google Rich Snippets -->
+    <!-- Comprehensive Structured Data (JSON-LD) for Google AI Overviews, SGE, AEO & Rich Results -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Brand",
-      "name": "Dail Cosmetics",
-      "url": "https://www.dailcosmetics.com",
-      "logo": "https://www.dailcosmetics.com/images/dail_logo.png",
-      "description": "Official Dail Cosmetics Pakistan. 100% Organic Herbal Hair Oil, Dail Beauty Cream (Strictly Without Steroid), and Hand & Foot Whitening Cream.",
-      "sameAs": []
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://www.dailcosmetics.com/#website",
+          "url": "https://www.dailcosmetics.com/",
+          "name": "Dail Cosmetics",
+          "description": "Pakistan's #1 Organic Herbal Hair Oil & Steroid-Free Skincare Store",
+          "inLanguage": "en-PK"
+        },
+        {
+          "@type": ["OnlineStore", "Brand"],
+          "@id": "https://www.dailcosmetics.com/#organization",
+          "name": "Dail Cosmetics",
+          "legalName": "Dail Cosmetics Pakistan",
+          "url": "https://www.dailcosmetics.com",
+          "logo": "https://www.dailcosmetics.com/images/dail_logo.png",
+          "image": "https://www.dailcosmetics.com/images/dail_logo.png",
+          "description": "Official brand manufacturer of 100% Pure Organic Herbal Hair Oil (120ml), Dail Beauty Cream without steroids or mercury, and Hand & Foot Whitening Cream in Pakistan.",
+          "telephone": "+92-319-5046310",
+          "email": "dailcosmeticscht@gmail.com",
+          "priceRange": "PKR 350 - PKR 2,499",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "PK"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+92-319-5046310",
+            "contactType": "Customer Support",
+            "areaServed": "PK",
+            "availableLanguage": ["English", "Urdu"]
+          }
+        },
+        {
+          "@type": "ItemList",
+          "@id": "https://www.dailcosmetics.com/#products",
+          "name": "Dail Cosmetics Best Sellers",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@type": "Product",
+                "name": "Dail Beauty Cream (Without Steroid)",
+                "image": "https://www.dailcosmetics.com/images/dail_beauty_cream_square.jpg",
+                "description": "Revolutionary skincare beauty cream formulated strictly without steroids, clobetasol, or mercury. Enriched with Alpha Arbutin, Glutathione, Niacinamide, and Vitamin E.",
+                "brand": { "@id": "https://www.dailcosmetics.com/#organization" },
+                "sku": "DAIL-BC-01",
+                "offers": {
+                  "@type": "Offer",
+                  "priceCurrency": "PKR",
+                  "price": "350",
+                  "availability": "https://schema.org/InStock",
+                  "url": "https://www.dailcosmetics.com/"
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.94",
+                  "reviewCount": "620"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@type": "Product",
+                "name": "Dail Premium Herbal Hair Oil (100% Natural 120ml)",
+                "image": "https://www.dailcosmetics.com/images/dail_full_collection.jpg",
+                "description": "100% pure organic herbal hair oil with cold-pressed rosemary bio-actives, mountain amla, and kalonji for rapid regrowth and stopping severe hair fall in 14 days.",
+                "brand": { "@id": "https://www.dailcosmetics.com/#organization" },
+                "sku": "DAIL-HO-120",
+                "offers": {
+                  "@type": "Offer",
+                  "priceCurrency": "PKR",
+                  "price": "999",
+                  "availability": "https://schema.org/InStock",
+                  "url": "https://www.dailcosmetics.com/"
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.98",
+                  "reviewCount": "780"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "item": {
+                "@type": "Product",
+                "name": "Dail Hand & Foot Whitening Cream",
+                "image": "https://www.dailcosmetics.com/images/dail_hero_banner_golden.jpg",
+                "description": "Fast-absorbing herbal formula for dark knuckles, heels, hands, and feet without peeling or thinning.",
+                "brand": { "@id": "https://www.dailcosmetics.com/#organization" },
+                "sku": "DAIL-HF-01",
+                "offers": {
+                  "@type": "Offer",
+                  "priceCurrency": "PKR",
+                  "price": "350",
+                  "availability": "https://schema.org/InStock",
+                  "url": "https://www.dailcosmetics.com/"
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.91",
+                  "reviewCount": "490"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://www.dailcosmetics.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Kya Dail Beauty Cream mein waqai koi steroid ya mercury nahi hai?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Bilkul nahi! Dail Beauty Cream aur Hand & Foot Cream 100% WITHOUT STEROID formulate ki gayi hain. Isme koi Clobetasol, Betamethasone ya Mercury shamil nahi hai jo skin ko patla kare ya dhoop mein laal kare. Yeh 100% safe, halal aur export quality botanical actives (Alpha Arbutin, Glutathione, Niacinamide, Pure Vitamin E) par mabni hai."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Dail Premium Herbal Hair Oil (120ml) se hair fall kitne din mein rukta hai?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "14,000+ Pakistani customers ke verified feedback ke mutabiq, 10 se 14 din ke baqaeda istemal (haftay mein 3 baar massage) se severe hair fall 80% se 90% tak ruk jata hai. Cold-pressed Rosemary, Mountain Amla aur Kalonji (Black Seed) oil dormant roots ko stimulate karke baby hairs ki growth ko tezi se shuru karte hain."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Dail Cosmetics ke products Pakistan mein kaise order karein aur delivery time kya hai?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Aap official website https://www.dailcosmetics.com ya WhatsApp (+92 319 5046310) ke zariye Cash on Delivery (COD) par poore Pakistan (Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Peshawar, Quetta aur tamam shehron) mein order kar sakte hain. Delivery 2 se 4 working days mein doorstep par hoti hai."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Dail Cosmetics products ke prices aur delivery charges kya hain?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Dail Beauty Cream Rs. 350, Dail Herbal Hair Oil (120ml) Rs. 999, aur Hand & Foot Whitening Cream Rs. 350 mein dastiyab hain. Rs. 2,000 se zyada ke order par poore Pakistan mein Free Delivery hai."
+              }
+            }
+          ]
+        }
+      ]
     }
     </script>
 

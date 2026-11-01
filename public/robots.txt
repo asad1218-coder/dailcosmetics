@@ -1,5 +1,39 @@
-﻿User-agent: *
+﻿# Robots.txt for Dail Cosmetics (https://www.dailcosmetics.com)
+# Optimized for Google Search Console, AEO (Answer Engine Optimization), and GEO (Generative Engine Optimization)
+
+User-agent: *
 Allow: /
 Disallow: /admin
+
+# Google Search & Google AI Overviews / SGE
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# OpenAI / ChatGPT Search
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Anthropic Claude
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+Allow: /
+
+# Microsoft Bing / Copilot
+User-agent: Bingbot
+Allow: /
+
+# Apple Search & Siri Intelligence
+User-agent: Applebot
+Allow: /
 
 Sitemap: https://www.dailcosmetics.com/sitemap.xml
