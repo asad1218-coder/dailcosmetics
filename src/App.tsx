@@ -2,7 +2,6 @@ import React from 'react';
 import { useStore } from './store/useStore';
 import { Navbar } from './components/Navbar';
 import { TrustPillarsBar } from './components/TrustPillarsBar';
-import { CategoryCirclesBar } from './components/CategoryCirclesBar';
 import { CatalogPage } from './components/CatalogPage';
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { CheckoutPage } from './components/CheckoutPage';
@@ -118,10 +117,7 @@ const HomeView: React.FC = () => {
       {/* 1. All Products Catalog Grid directly below Navbar */}
       <CatalogPage />
 
-      {/* 2. 4 Category Circles (Beauty Cream, Hair Oil, Hand & Foot Care, 3-in-1 Regimen Box) */}
-      <CategoryCirclesBar />
-
-      {/* 3. Golden Pearl Trust Pillars & Guarantees (Free Delivery, COD, 0% Steroids, Helpline) */}
+      {/* 2. Golden Pearl Trust Pillars & Guarantees (Free Delivery, COD, 0% Steroids, Helpline) */}
       <TrustPillarsBar />
 
       {/* 3. Medical Truth: "Why Without Steroids?" Trust Comparison */}

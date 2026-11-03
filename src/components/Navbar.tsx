@@ -394,18 +394,23 @@ export const Navbar: React.FC = () => {
                 </button>
                 {skincareDropdownOpen && (
                   <div className="pl-4 pb-2 space-y-1 text-xs font-semibold text-stone-600">
-                    <button
-                      onClick={() => navigateToProduct('dail-beauty-cream')}
-                      className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer"
-                    >
-                      Dail Beauty Cream (5-Day Plan)
-                    </button>
-                    <button
-                      onClick={() => navigateToProduct('dail-hand-and-foot-whitening-cream')}
-                      className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer"
-                    >
-                      Hand & Foot Whitening Cream (PKR 350)
-                    </button>
+                    {products.filter((p) => p.category === 'cream').length === 0 ? (
+                      <p className="py-2 px-3 text-stone-400 text-[11px]">No products in this category</p>
+                    ) : (
+                      products.filter((p) => p.category === 'cream').map((p) => (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            navigateToProduct(p.id);
+                            setMobileMenuOpen(false);
+                          }}
+                          className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer flex items-center justify-between"
+                        >
+                          <span className="truncate mr-2">{p.name}</span>
+                          <span className="text-[10px] text-[#d0473e] font-bold shrink-0">PKR {p.price.toLocaleString()}</span>
+                        </button>
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -421,12 +426,23 @@ export const Navbar: React.FC = () => {
                 </button>
                 {haircareDropdownOpen && (
                   <div className="pl-4 pb-2 space-y-1 text-xs font-semibold text-stone-600">
-                    <button
-                      onClick={() => navigateToProduct('dail-premium-herbal-hair-oil')}
-                      className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer"
-                    >
-                      Premium Herbal Hair Oil 120ml (PKR 999)
-                    </button>
+                    {products.filter((p) => p.category === 'hair-care').length === 0 ? (
+                      <p className="py-2 px-3 text-stone-400 text-[11px]">No products in this category</p>
+                    ) : (
+                      products.filter((p) => p.category === 'hair-care').map((p) => (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            navigateToProduct(p.id);
+                            setMobileMenuOpen(false);
+                          }}
+                          className="w-full text-left py-2 px-3 hover:text-[#d0473e] cursor-pointer flex items-center justify-between"
+                        >
+                          <span className="truncate mr-2">{p.name}</span>
+                          <span className="text-[10px] text-[#d0473e] font-bold shrink-0">PKR {p.price.toLocaleString()}</span>
+                        </button>
+                      ))
+                    )}
                   </div>
                 )}
               </div>

@@ -2685,6 +2685,45 @@ export const AdminPortal: React.FC = () => {
 };
 
 // =========================================================================
+// HELPER: CLIENT-SIDE IMAGE COMPRESSION (PREVENTS LOCALSTORAGE OVERFLOW)
+// =========================================================================
+const compressImageFile = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.8): Promise<string> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } else {
+          resolve((e.target?.result as string) || '');
+        }
+      };
+      img.onerror = () => resolve((e.target?.result as string) || '');
+      img.src = (e.target?.result as string) || '';
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+};
+
+// =========================================================================
 // SUB-COMPONENT: PRODUCT FORM MODAL (ADD / EDIT)
 // =========================================================================
 interface ProductFormModalProps {
@@ -2740,26 +2779,27 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     setNewGalleryUrl('');
   };
 
-  const handleMultipleFilesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMultipleFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (reader.result) {
-          const res = reader.result as string;
+    for (const file of Array.from(files)) {
+      try {
+        const compressed = await compressImageFile(file);
+        if (compressed) {
           setGalleryImages((prev) => {
-            if (!prev.includes(res)) {
-              return [...prev, res];
+            if (!prev.includes(compressed)) {
+              return [...prev, compressed];
             }
             return prev;
           });
-          if (!image) setImage(res);
+          setImage((prev) => (!prev ? compressed : prev));
         }
-      };
-      reader.readAsDataURL(file);
-    });
+      } catch (err) {
+        console.error('Error compressing image:', err);
+      }
+    }
+    e.target.value = '';
   };
 
   const handleSetCoverPhoto = (imgSrc: string) => {
