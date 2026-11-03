@@ -45,7 +45,9 @@ import {
   Database,
   RefreshCw,
   Wifi,
-  WifiOff
+  WifiOff,
+  Download,
+  Upload
 } from 'lucide-react';
 
 export const AdminPortal: React.FC = () => {
@@ -323,6 +325,61 @@ export const AdminPortal: React.FC = () => {
     alert(`Discount Coupon "${newCouponCode.trim().toUpperCase()}" created and active!`);
   };
 
+  const handleExportBackup = () => {
+    const backupData = {
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      products,
+      categories,
+      storeSettings,
+      heroSlides,
+      customPages,
+      faqs,
+      coupons,
+      reviews,
+      orders
+    };
+    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `dail_cosmetics_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (json.products && Array.isArray(json.products)) {
+          useStore.setState({
+            ...(json.products ? { products: json.products } : {}),
+            ...(json.categories ? { categories: json.categories } : {}),
+            ...(json.storeSettings ? { storeSettings: json.storeSettings } : {}),
+            ...(json.heroSlides ? { heroSlides: json.heroSlides } : {}),
+            ...(json.customPages ? { customPages: json.customPages } : {}),
+            ...(json.faqs ? { faqs: json.faqs } : {}),
+            ...(json.coupons ? { coupons: json.coupons } : {}),
+            ...(json.reviews ? { reviews: json.reviews } : {}),
+            ...(json.orders ? { orders: json.orders } : {}),
+          });
+          syncToCloud();
+          alert('Backup successfully imported! All products, prices, and settings updated.');
+        } else {
+          alert('Invalid backup file format.');
+        }
+      } catch (err) {
+        alert('Failed to parse backup file: ' + err);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   // =========================================================================
   // 1. PRIVATE PASSWORD LOGIN GATE (Restricted Access)
   // =========================================================================
@@ -466,6 +523,24 @@ export const AdminPortal: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-2.5">
+            <button
+              onClick={handleExportBackup}
+              className="px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Download full backup to transfer to mobile or save"
+            >
+              <Download className="w-3.5 h-3.5 text-[#7b3e1d]" />
+              <span className="hidden sm:inline">Export Backup</span>
+            </button>
+
+            <label
+              className="px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Load backup from another device"
+            >
+              <Upload className="w-3.5 h-3.5 text-[#7b3e1d]" />
+              <span className="hidden sm:inline">Import Backup</span>
+              <input type="file" accept=".json" onChange={handleImportBackup} className="hidden" />
+            </label>
+
             <button
               onClick={() => {
                 if (window.confirm('Are you sure you want to restore default factory formulations and settings?')) {
