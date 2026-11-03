@@ -1,5 +1,5 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { connectToDatabase } from './lib/mongodb.js';
+﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { cloudStorage } from './lib/storage.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,25 +11,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { db } = await connectToDatabase();
-    if (!db) {
-      return res.status(200).json({
-        ok: false,
-        connected: false,
-        orders: [],
-        message: 'MongoDB not connected. Running in local mode.'
-      });
-    }
-
-    const collection = db.collection('orders');
-
     if (req.method === 'GET') {
-      const orders = await collection
-        .find({})
-        .sort({ createdAt: -1 })
-        .limit(200)
-        .toArray();
-
+      const orders = await cloudStorage.getOrders();
       return res.status(200).json({
         ok: true,
         connected: true,
@@ -44,52 +27,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ ok: false, error: 'orderId is required' });
       }
 
-      await collection.updateOne(
-        { orderId: body.orderId },
-        { $set: { ...body, updatedAt: new Date() } },
-        { upsert: true }
-      );
-
+      const saved = await cloudStorage.saveOrder(body);
       return res.status(201).json({
-        ok: true,
-        connected: true,
-        message: 'Order saved to MongoDB Atlas.',
+        ok: saved,
+        connected: saved,
+        message: saved ? 'Order saved to Cloud Database.' : 'Could not save order.',
         orderId: body.orderId
       });
     }
 
     if (req.method === 'PATCH') {
       const { orderId, status, trackingNumber } = body || {};
+      if (!orderId || !status) {
+        return res.status(400).json({ ok: false, error: 'orderId and status are required' });
+      }
+
+      const updated = await cloudStorage.updateOrderStatus(orderId, status, trackingNumber);
+      return res.status(200).json({ ok: updated });
+    }
+
+    if (req.method === 'DELETE') {
+      const orderId = (req.query?.orderId as string) || body?.orderId;
       if (!orderId) {
         return res.status(400).json({ ok: false, error: 'orderId is required' });
       }
 
-      const updateFields: any = { updatedAt: new Date() };
-      if (status) updateFields.status = status;
-      if (trackingNumber !== undefined) updateFields.trackingNumber = trackingNumber;
-
-      await collection.updateOne(
-        { orderId },
-        { $set: updateFields }
-      );
-
-      return res.status(200).json({ ok: true, connected: true });
+      const deleted = await cloudStorage.deleteOrder(orderId);
+      return res.status(200).json({ ok: deleted });
     }
 
-    if (req.method === 'DELETE') {
-      const { orderId } = body || {};
-      if (orderId) {
-        await collection.deleteOne({ orderId });
-      }
-      return res.status(200).json({ ok: true, connected: true });
-    }
-
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error: any) {
-    console.error('Error in /api/orders:', error);
     return res.status(500).json({
       ok: false,
-      error: error?.message || 'Internal server error'
+      error: error?.message || 'Orders Server Error'
     });
   }
 }

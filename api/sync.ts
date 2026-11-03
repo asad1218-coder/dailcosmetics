@@ -1,5 +1,5 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { connectToDatabase } from './lib/mongodb.js';
+﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { cloudStorage } from './lib/storage.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,35 +11,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { db } = await connectToDatabase();
-    if (!db) {
-      return res.status(200).json({
-        ok: false,
-        connected: false,
-        message: 'MongoDB not connected. Changes saved in local browser storage only.'
-      });
-    }
-
-    const collection = db.collection('store_data');
-
     if (req.method === 'GET') {
-      const doc = await collection.findOne({ _id: 'dail_store_state' as any });
-      if (!doc) {
-        return res.status(200).json({
-          ok: true,
-          connected: true,
-          data: null,
-          message: 'Database is ready and waiting for initial store seed.'
-        });
-      }
-
-      const { _id, ...storeData } = doc;
-      return res.status(200).json({
-        ok: true,
-        connected: true,
-        data: storeData,
-        updatedAt: (doc as any).updatedAt || null
-      });
+      const result = await cloudStorage.getStoreData();
+      return res.status(200).json(result);
     }
 
     if (req.method === 'POST') {
@@ -48,32 +22,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ ok: false, error: 'Invalid JSON body' });
       }
 
-      const updatedAt = new Date();
-      await collection.updateOne(
-        { _id: 'dail_store_state' as any },
-        { 
-          $set: {
-            ...body,
-            updatedAt
-          } 
-        },
-        { upsert: true }
-      );
-
-      return res.status(200).json({
-        ok: true,
-        connected: true,
-        message: 'Store state successfully synchronized with MongoDB Atlas cloud.',
-        updatedAt
-      });
+      const result = await cloudStorage.setStoreData(body);
+      return res.status(200).json(result);
     }
 
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   } catch (error: any) {
-    console.error('Error in /api/sync:', error);
     return res.status(500).json({
       ok: false,
-      error: error?.message || 'Internal server error'
+      error: error?.message || 'Sync Server Error'
     });
   }
 }
