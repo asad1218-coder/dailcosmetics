@@ -264,15 +264,19 @@ export const ProductDetailPage: React.FC = () => {
               <div className="flex items-center gap-2 text-stone-700">
                 <Truck className="w-4 h-4 text-[#7b3e1d]" />
                 <span>Estimate delivery to:</span>
-                <select
+                <input
+                  type="text"
+                  list="calc-cities-list"
                   value={calcCity}
                   onChange={(e) => setCalcCity(e.target.value)}
-                  className="bg-white border border-stone-300 rounded-lg px-2 py-1 font-bold text-stone-900 cursor-pointer text-xs"
-                >
-                  {PAKISTAN_CITIES.slice(0, 10).map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                  placeholder="Apna shehar likhein..."
+                  className="bg-white border border-stone-300 rounded-lg px-2 py-1 font-bold text-stone-900 text-xs w-36 sm:w-44 focus:outline-hidden focus:border-[#7b3e1d]"
+                />
+                <datalist id="calc-cities-list">
+                  {PAKISTAN_CITIES.map((c) => (
+                    <option key={c} value={c} />
                   ))}
-                </select>
+                </datalist>
               </div>
               <span className="text-emerald-700 font-bold">
                 ✓ 2-3 Business Days (Express COD)
@@ -583,15 +587,20 @@ export const ProductDetailPage: React.FC = () => {
 
               <div>
                 <label className="block text-stone-700 font-bold mb-1">Your City in Pakistan *</label>
-                <select
+                <input
+                  type="text"
+                  required
+                  list="review-cities-list"
+                  placeholder="Apna shehar likhein (e.g. Faisalabad, Gilgit...)"
                   value={newReviewCity}
                   onChange={(e) => setNewReviewCity(e.target.value)}
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-stone-900 focus:outline-hidden focus:border-[#7b3e1d] cursor-pointer"
-                >
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-stone-900 focus:outline-hidden focus:border-[#7b3e1d]"
+                />
+                <datalist id="review-cities-list">
                   {PAKISTAN_CITIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c} />
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>

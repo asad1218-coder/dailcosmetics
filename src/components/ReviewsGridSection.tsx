@@ -185,15 +185,20 @@ export const ReviewsGridSection: React.FC = () => {
 
               <div>
                 <label className="block text-stone-700 font-bold mb-1">Your City in Pakistan *</label>
-                <select
+                <input
+                  type="text"
+                  required
+                  list="grid-review-cities-list"
+                  placeholder="Apna shehar likhein (e.g. Multan, Peshawar, Sukkur...)"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-stone-900 focus:outline-hidden focus:border-[#7b3e1d] cursor-pointer"
-                >
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-stone-900 focus:outline-hidden focus:border-[#7b3e1d]"
+                />
+                <datalist id="grid-review-cities-list">
                   {PAKISTAN_CITIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c} />
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>

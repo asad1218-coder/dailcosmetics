@@ -33,8 +33,8 @@ export const CheckoutPage: React.FC = () => {
     phone: '',
     email: '',
     address: '',
-    city: 'Lahore',
-    province: 'Punjab',
+    city: '',
+    province: 'Pakistan',
     notes: '',
   });
 
@@ -253,16 +253,23 @@ export const CheckoutPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-stone-700 font-bold mb-1">City *</label>
-                  <select
+                  <label className="block text-stone-700 font-bold mb-1">
+                    City / Town (Pura Pakistan) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    list="pakistan-cities-list"
+                    placeholder="Apna shehar ya ilaqa likhein (e.g. Lahore, Daska, Swat...)"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-stone-900 focus:outline-hidden focus:border-[#7b3e1d] cursor-pointer"
-                  >
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-stone-900 focus:outline-hidden focus:border-[#7b3e1d]"
+                  />
+                  <datalist id="pakistan-cities-list">
                     {PAKISTAN_CITIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                      <option key={c} value={c} />
                     ))}
-                  </select>
+                  </datalist>
                 </div>
 
                 <div>
