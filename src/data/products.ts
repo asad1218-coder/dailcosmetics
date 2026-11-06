@@ -134,7 +134,7 @@ export const PRODUCTS: Product[] = [
     id: 'dail-glowing-duo-bundle',
     name: 'Dail Daily Beauty Cream + Herbal Hair Oil Duo',
     urduName: 'ڈیل بیوٹی کریم + ہربل ہیئر آئل کومبو ڈیل',
-    tagline: 'Our 2 flagship organic essentials together: Dail Beauty Cream (PKR 350) + Premium Herbal Hair Oil 120ml (PKR 999).',
+    tagline: 'Our 2 flagship organic essentials together: Full Size Dail Beauty Cream + Premium Herbal Hair Oil 120ml.',
     category: 'bundles',
     concern: ['Hair Fall', 'Radiant Glow', 'Without Steroid'],
     price: 1199,
@@ -150,11 +150,11 @@ export const PRODUCTS: Product[] = [
       '/images/dail_beauty_cream_square.jpg',
       '/images/dail_hero_banner_golden.jpg'
     ],
-    description: 'The ultimate daily essential combination: Dail Beauty Cream for smooth, glowing skin without steroids + Dail Premium Herbal Hair Oil (120ml) to stop hair loss and boost healthy growth. Save Rs. 250 with this special duo deal.',
+    description: 'The ultimate daily essential combination: Dail Beauty Cream for smooth, glowing skin without steroids + Dail Premium Herbal Hair Oil (120ml) to stop hair loss and boost healthy growth. Save more with this special duo deal.',
     benefits: [
       'Includes full size Dail Beauty Cream + 120ml Herbal Hair Oil',
       'Complete face and hair revitalizing daily routine',
-      'Special discounted bundle price of PKR 1,199',
+      'Special discounted bundle deal with instant savings',
       'Available with Cash On Delivery nationwide'
     ],
     keyIngredients: [
@@ -236,7 +236,7 @@ export const PRODUCTS: Product[] = [
     benefits: [
       'Double supply (2x Hair Oils + 2x Beauty Creams)',
       'FREE nationwide delivery via TCS / Trax Express',
-      'Save Rs. 500 over individual purchases',
+      'Maximum value savings pack over individual purchases',
       'Cash on Delivery available nationwide'
     ],
     keyIngredients: [

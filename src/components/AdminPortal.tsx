@@ -2834,6 +2834,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [image, setImage] = useState(initialData?.image || galleryImages[0] || '/images/dail_beauty_cream_square.jpg');
   const [newGalleryUrl, setNewGalleryUrl] = useState('');
   const [description, setDescription] = useState(initialData?.description || '');
+  const [benefitsText, setBenefitsText] = useState(() => {
+    return initialData?.benefits?.join('\n') || '';
+  });
   const [inStock, setInStock] = useState(initialData?.inStock ?? true);
 
   const presetImages = [
@@ -2896,6 +2899,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
     const finalCover = image || galleryImages[0] || '/images/dail_beauty_cream_square.jpg';
     const finalGallery = galleryImages.length > 0 ? galleryImages : [finalCover];
 
+    const parsedBenefits = benefitsText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+
     onSave({
       name: name.trim(),
       urduName: urduName.trim(),
@@ -2911,7 +2919,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
       image: finalCover,
       galleryImages: finalGallery,
       description: description.trim() || `${name} is formulated with 100% pure organic bio-actives strictly without harmful steroids or synthetic bleaches.`,
-      benefits: initialData?.benefits || ['Export Quality Batch', '100% Pure Herbal Actives'],
+      benefits: parsedBenefits.length ? parsedBenefits : (initialData?.benefits || ['Export Quality Batch', '100% Pure Herbal Actives']),
       keyIngredients: initialData?.keyIngredients || [{ name: 'Botanical Actives', description: 'Certified Pure' }],
       howToUse: initialData?.howToUse || ['Apply gently on desired area.'],
       fullIngredients: initialData?.fullIngredients || 'Cold-Pressed Botanical Actives.',
@@ -3190,6 +3198,23 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Formulation details, active botanicals, guarantee..."
               className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden"
+            />
+          </div>
+
+          {/* Clinically Proven Results & Benefits Checklist */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="font-bold text-stone-800 block text-xs">
+                Clinically Proven Results & Benefits (1 per line)
+              </label>
+              <span className="text-[10px] text-stone-500 font-medium">Har line ek alag bullet point banegi</span>
+            </div>
+            <textarea
+              rows={4}
+              value={benefitsText}
+              onChange={(e) => setBenefitsText(e.target.value)}
+              placeholder="Full size Dail Beauty Cream + 120ml Herbal Hair Oil&#10;Complete face and hair revitalizing daily routine&#10;Special discounted bundle deal&#10;Available with Cash On Delivery nationwide"
+              className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:outline-hidden text-xs font-mono leading-relaxed"
             />
           </div>
 

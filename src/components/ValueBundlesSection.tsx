@@ -4,59 +4,63 @@ import { ShoppingBag, Sparkles, CheckCircle2, Truck, ArrowRight } from 'lucide-r
 import { PRODUCTS } from '../data/products';
 
 export const ValueBundlesSection: React.FC = () => {
-  const { addToCart, setSelectedProduct, setCurrentPage } = useStore();
+  const { addToCart, setSelectedProduct, setCurrentPage, products } = useStore();
+
+  const duoProduct = products.find((p) => p.id === 'dail-glowing-duo-bundle') || products[3] || PRODUCTS[3];
+  const trioProduct = products.find((p) => p.id === 'dail-complete-trio-set') || products[4] || PRODUCTS[4];
+  const familyProduct = products.find((p) => p.id === 'dail-family-pack') || products[5] || PRODUCTS[5];
 
   const bundles = [
     {
       id: 'bundle-trio',
-      title: 'Dail Complete 3-in-1 Regimen Box',
-      tagline: '120ml Herbal Hair Oil (PKR 999) + Dail Beauty Cream (PKR 350) + Hand & Foot Cream (PKR 350)',
+      title: trioProduct?.name || 'Dail Complete 3-in-1 Regimen Box',
+      tagline: '120ml Herbal Hair Oil + Dail Beauty Cream + Hand & Foot Whitening Cream',
       badge: 'TOP VALUE DEAL',
-      price: 1499,
-      originalPrice: 1699,
-      saving: 200,
-      image: '/images/dail_hero_banner_golden.jpg',
-      features: [
+      price: trioProduct?.price || 1499,
+      originalPrice: trioProduct?.originalPrice || 1799,
+      saving: (trioProduct?.originalPrice || 1799) - (trioProduct?.price || 1499),
+      image: trioProduct?.image || '/images/dail_hero_banner_golden.jpg',
+      features: trioProduct?.benefits?.slice(0, 4) || [
         'All 3 signature export-quality formulations in one box',
         'Stops hair fall + imparts radiant facial glow without steroids',
         'Tamper-proof golden factory seal & export grade packing',
         'Cash On Delivery available across Pakistan'
       ],
-      product: PRODUCTS[4] || PRODUCTS[0]
+      product: trioProduct
     },
     {
       id: 'bundle-duo',
-      title: 'Daily Beauty Cream + Herbal Hair Oil Duo',
-      tagline: 'Dail Beauty Cream (PKR 350) + Premium Herbal Hair Oil 120ml (PKR 999)',
+      title: duoProduct?.name || 'Daily Beauty Cream + Herbal Hair Oil Duo',
+      tagline: 'Full Size Dail Beauty Cream + Premium Herbal Hair Oil 120ml',
       badge: 'BESTSELLER DUO',
-      price: 1199,
-      originalPrice: 1349,
-      saving: 150,
-      image: '/images/dail_full_collection.jpg',
-      features: [
+      price: duoProduct?.price || 1199,
+      originalPrice: duoProduct?.originalPrice || 1449,
+      saving: (duoProduct?.originalPrice || 1449) - (duoProduct?.price || 1199),
+      image: duoProduct?.image || '/images/dail_full_collection.jpg',
+      features: duoProduct?.benefits?.slice(0, 4) || [
         'Strictly 0% steroids — safe daily cell renewal and glow',
         'Cold-pressed rosemary bio-actives & amla for rapid regrowth',
         'Visible results in 5 to 7 days guaranteed',
         'Official factory batch direct from Dail Cosmetics'
       ],
-      product: PRODUCTS[3] || PRODUCTS[1]
+      product: duoProduct
     },
     {
       id: 'bundle-family',
-      title: 'Dail Family Double Pack (FREE DELIVERY)',
+      title: familyProduct?.name || 'Dail Family Double Pack (FREE DELIVERY)',
       tagline: '2x Herbal Hair Oils 120ml + 2x Dail Beauty Creams (Double supply)',
       badge: 'FREE DELIVERY',
-      price: 2399,
-      originalPrice: 2698,
-      saving: 299,
-      image: '/images/dail_hero_banner_golden.jpg',
-      features: [
+      price: familyProduct?.price || 2399,
+      originalPrice: familyProduct?.originalPrice || 2899,
+      saving: (familyProduct?.originalPrice || 2899) - (familyProduct?.price || 2399),
+      image: familyProduct?.image || '/images/dail_hero_banner_golden.jpg',
+      features: familyProduct?.benefits?.slice(0, 4) || [
         'Double supply (2x Hair Oils 120ml + 2x Beauty Creams 50g)',
         'FREE express courier delivery nationwide included',
         'Pure rosemary, kalonji, amla & glutathione formulations',
         'Best family value savings pack'
       ],
-      product: PRODUCTS[5] || PRODUCTS[0]
+      product: familyProduct
     }
   ];
 

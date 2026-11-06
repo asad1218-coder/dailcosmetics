@@ -439,12 +439,22 @@ export const ProductDetailPage: React.FC = () => {
                     </h2>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    {product.benefits.map((b, i) => (
-                      <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
-                        <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                        <span className="text-xs sm:text-sm text-stone-800 font-medium">{b}</span>
-                      </div>
-                    ))}
+                    {product.benefits.map((b, i) => {
+                      // Dynamically replace any old static bundle price text with the product's actual current price
+                      const dynamicText = b.toLowerCase().includes('bundle price') || b.toLowerCase().includes('discounted price')
+                        ? `Special discounted bundle price of PKR ${currentPrice.toLocaleString()}`
+                        : b.replace(/PKR\s*\d[\d,]*/gi, (match) => {
+                            // If the benefit mentions the bundle's price, keep it dynamic
+                            return match;
+                          });
+
+                      return (
+                        <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                          <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                          <span className="text-xs sm:text-sm text-stone-800 font-medium">{dynamicText}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
